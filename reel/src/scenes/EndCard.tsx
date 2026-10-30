@@ -34,7 +34,7 @@ const Morph: React.FC<{ from: React.ReactNode; to: React.ReactNode; p: number; s
   );
 };
 
-/** Logo, name morphing into PER5ON, handle, availability — then holds so it can be read. */
+/** Logo, name morphing into PER5ON; the handle drops out once the alias lands, then it holds. */
 export const EndCard = () => {
   const frame = useCurrentFrame();
   const rest = flicker(frame, 20);
@@ -69,7 +69,7 @@ export const EndCard = () => {
             }
             to={
               <div style={{ fontSize: 210, fontWeight: 700, letterSpacing: -9, lineHeight: 1 }}>
-                PER<span style={{ color: C.lime }}>5</span>ON
+                PER5ON
               </div>
             }
           />
@@ -78,13 +78,35 @@ export const EndCard = () => {
           <Label color={C.white} style={{ fontSize: 34, opacity: after ? flicker(frame, MORPH + MORPH_FRAMES) : 1 }}>
             {after ? "Elmohanad Karoum" : "aka DJPER5ON"}
           </Label>
-          <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 88, letterSpacing: -2, color: C.lime, marginTop: 50 }}>
+          <div
+            style={{
+              fontFamily: SANS,
+              fontWeight: 700,
+              fontSize: 88,
+              letterSpacing: -2,
+              color: C.lime,
+              marginTop: 50,
+              opacity: after ? 1 - flicker(frame, MORPH + MORPH_FRAMES + 2) : 1,
+            }}
+          >
             @djper5on
           </div>
         </div>
         <Label
           color={C.white}
-          style={{ position: "absolute", top: 1360, width: "100%", textAlign: "center", fontSize: 30, lineHeight: 1.6, opacity: 0.85 * rest }}
+          style={{
+            position: "absolute",
+            top: interpolate(frame, [MORPH + MORPH_FRAMES + 6, MORPH + MORPH_FRAMES + 16], [1360, 1170], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+              easing: IN_OUT,
+            }),
+            width: "100%",
+            textAlign: "center",
+            fontSize: 30,
+            lineHeight: 1.6,
+            opacity: 0.85 * rest,
+          }}
         >
           Available for creative projects
           <br />& collaborations
