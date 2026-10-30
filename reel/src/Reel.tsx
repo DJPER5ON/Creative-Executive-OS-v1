@@ -10,7 +10,7 @@ import { Philosophy } from "./scenes/Philosophy";
 import { Process } from "./scenes/Process";
 import { Roles, ROLE_FRAMES } from "./scenes/Roles";
 import { Services, SERVICE_FRAMES } from "./scenes/Services";
-import { BEAT, C, Cut } from "./theme";
+import { BEAT, C, Cut, SfxEnabled } from "./theme";
 
 export const FPS = 30;
 
@@ -30,10 +30,10 @@ export const SCENES: { id: string; component: React.FC; frames: number; cut?: { 
 
 export const REEL_FRAMES = SCENES.reduce((n, s) => n + s.frames, 0);
 
-export type ReelProps = { music: boolean };
+export type ReelProps = { music: boolean; sfx?: boolean };
 
-export const Reel: React.FC<ReelProps> = ({ music }) => (
-  <>
+export const Reel: React.FC<ReelProps> = ({ music, sfx = true }) => (
+  <SfxEnabled.Provider value={sfx}>
     {music ? (
       <Audio
         src={staticFile("music/bed.wav")}
@@ -53,5 +53,5 @@ export const Reel: React.FC<ReelProps> = ({ music }) => (
         </Series.Sequence>
       ))}
     </Series>
-  </>
+  </SfxEnabled.Provider>
 );
