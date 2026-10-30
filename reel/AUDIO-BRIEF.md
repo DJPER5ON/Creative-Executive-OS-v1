@@ -8,41 +8,47 @@ get trimmed, beat-aligned and mixed into the video.
 
 ## 1. Music — Suno
 
+Written from an analysis of the reference reel's audio: 112 BPM, ~73% of the
+energy below 250 Hz (half of it sub bass), very little top end, melodic
+content 2.5× the drums, a dark minor colour (F / B / E / G# / F#), no vocals,
+and one shape — restrained for ~18 s, filter opens, a big drop at ~20 s, a low
+sub boom at ~26 s, silence.
+
 **Style of Music** (paste into the style box):
 
 ```
-minimal tech house, 112 BPM, instrumental, punchy tight kick, crisp off-beat hi-hats, deep rolling sub bass, glitchy plucked synth stabs, short vocal-chop textures, clean modern production, motion-graphics promo, confident, sleek, risers and hard drops
+dark minimal electronic, 112 BPM, F minor, instrumental, deep heavy sub bass, warm dark mix with soft rolled-off highs, sparse tight percussion, muted plucks, moody tense synth chords, slow filter sweep build, one huge cinematic drop with wide detuned chords and massive 808, ends on a deep sub boom, sleek luxury brand film
 ```
 
-**Lyrics** box (instrumental structure tags only — turn on *Instrumental*):
+**Exclude Styles** (if your Suno version has the box):
+
+```
+vocals, bright EDM lead, supersaw festival drop, guitar, piano ballad, happy, lo-fi
+```
+
+**Lyrics** box (turn on *Instrumental*; tags only):
 
 ```
 [Intro]
-[filtered synth pulse, no kick, tension]
+[sub bass pulse, muted pluck, sparse hats, dark and restrained]
+
+[Verse]
+[minimal groove, deep 808, soft clicks, tension holds]
 
 [Build]
-[hi-hats enter, short riser]
+[low-pass filter slowly opens, rising sweep, snare roll]
 
 [Drop]
-[full groove, punchy kick, rolling bass, glitch stabs]
-
-[Breakdown]
-[kick out, plucked arp only, airy]
-
-[Build]
-[snare roll, rising sweep]
-
-[Drop]
-[big impact, full energy]
+[huge impact, wide dark chords, massive sub bass, full groove]
 
 [Outro]
-[sub boom, filtered fade]
+[everything cuts, one deep sub boom, silence]
 ```
 
 Tips:
-- Generate 2–4 versions and pick the one with the cleanest, punchiest drop.
-- Any length is fine — send the full song; the best 30 s gets cut out and fitted.
-- If Suno drifts off 112 BPM it can still be used: either the track is nudged or the cuts are re-timed to its beat.
+- Generate 3–4 takes; keep the one whose drop hits hardest and whose intro stays the most minimal.
+- Send the full song. The drop gets placed on the reel's big moment
+  (19.2 s, "One mind.") and the sub boom on the end card.
 
 ### Where the music should move (reel timeline)
 
