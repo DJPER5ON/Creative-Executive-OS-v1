@@ -8,47 +8,53 @@ get trimmed, beat-aligned and mixed into the video.
 
 ## 1. Music — Suno
 
-Written from an analysis of the reference reel's audio: 112 BPM, ~73% of the
-energy below 250 Hz (half of it sub bass), very little top end, melodic
-content 2.5× the drums, a dark minor colour (F / B / E / G# / F#), no vocals,
-and one shape — restrained for ~18 s, filter opens, a big drop at ~20 s, a low
-sub boom at ~26 s, silence.
+Written from an event-by-event analysis of the reference reel's audio:
+112 BPM; ~73% of the energy below 250 Hz; very little top end; a dark minor
+colour; no vocals. For the first 20 s there is no real groove — just a
+constant clock-like ticking pulse (16th notes, one tick every 0.13 s) with a
+sharp click on every beat over deep sub. At ~20.3 s one huge sub impact drops;
+~22.5 s long reverse swells stack up; ~23.7–24.8 s five stutter hits fire every
+0.27 s; ~26.2 s a sweep out; a low tail, then silence at ~28 s.
 
 **Style of Music** (paste into the style box):
 
 ```
-dark minimal electronic, 112 BPM, F minor, instrumental, deep heavy sub bass, warm dark mix with soft rolled-off highs, sparse tight percussion, muted plucks, moody tense synth chords, slow filter sweep build, one huge cinematic drop with wide detuned chords and massive 808, ends on a deep sub boom, sleek luxury brand film
+dark minimal electronic, 112 BPM, F minor, instrumental, constant ticking clock-like 16th-note percussion, crisp clicks on every beat, deep heavy sub bass, playful tense game-like plucks, muted warm dark mix, no big drums at first, reverse swells, one massive sub-drop impact, stuttering hit rolls, cinematic sound design, sleek luxury brand film
 ```
 
 **Exclude Styles** (if your Suno version has the box):
 
 ```
-vocals, bright EDM lead, supersaw festival drop, guitar, piano ballad, happy, lo-fi
+vocals, singing, bright EDM lead, supersaw, festival drop, four-on-the-floor house groove, guitar, piano ballad, happy pop, lo-fi
 ```
 
 **Lyrics** box (turn on *Instrumental*; tags only):
 
 ```
 [Intro]
-[sub bass pulse, muted pluck, sparse hats, dark and restrained]
+[ticking clock pulse, sub bass hum, clicks on the beat]
 
 [Verse]
-[minimal groove, deep 808, soft clicks, tension holds]
+[ticking continues, playful muted plucks, tension, no kick]
 
 [Build]
-[low-pass filter slowly opens, rising sweep, snare roll]
+[ticking speeds up, reverse swells, rising tension]
 
 [Drop]
-[huge impact, wide dark chords, massive sub bass, full groove]
+[one massive sub impact, dark wide chords, heavy 808]
+
+[Break]
+[stutter hits, rapid impacts, glitch cuts]
 
 [Outro]
-[everything cuts, one deep sub boom, silence]
+[sweep out, deep low tail, silence]
 ```
 
 Tips:
-- Generate 3–4 takes; keep the one whose drop hits hardest and whose intro stays the most minimal.
-- Send the full song. The drop gets placed on the reel's big moment
-  (19.2 s, "One mind.") and the sub boom on the end card.
+- Generate 3–4 takes. Keep the one whose first half stays the most minimal
+  (ticking, no drums) and whose drop is a single heavy hit.
+- Send the full song. Its drop goes on the reel's big moment (19.2 s,
+  "One mind.") and its stutter hits on the fast cuts.
 
 ### Where the music should move (reel timeline)
 
@@ -83,6 +89,9 @@ prompt column is ready to paste.
 | `riser` | 2.2 s | Tension riser, rising noise sweep and synth, builds to a cut-off | 22.40 → 24.53 s |
 | `sub-boom` | 3 s | Massive low sub boom with long cinematic decay | End card 24.53 s |
 | `morph` | 1 s | Liquid morph swoosh, gooey digital transformation, smooth | Name → PER5ON 26.53 s |
+| `tick-loop` | 4 s | Fast mechanical clock ticking, 16th notes at 112 BPM, tight and dry, close mic | Under 0–8.5 s as texture |
+| `stutter` | 1.5 s | Five heavy cinematic impact hits in a fast stutter roll, evenly spaced, dark | Manifesto cuts 19.2–21.3 s |
+| `reverse-swell` | 1.2 s | Reverse cymbal and noise swell rising into a hard stop, cinematic | Before the drop and before the end card |
 | `logo-sting` | 2 s | Short premium logo sting, shimmering impact with reverse swell | Logo reveal video |
 
 Send the files (any of WAV / MP3 / M4A) and they replace the placeholder sounds
