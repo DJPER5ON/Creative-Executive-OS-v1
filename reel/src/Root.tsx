@@ -12,7 +12,7 @@ export const RemotionRoot: React.FC = () => {
           <Composition key={s.id} id={s.id} component={s.component} durationInFrames={s.frames} {...SIZE} />
         ))}
       </Folder>
-      <Composition id="Reel" component={Reel} durationInFrames={REEL_FRAMES} defaultProps={{ music: true, sfx: 0 }} {...SIZE} />
+      <Composition id="Reel" component={Reel} durationInFrames={REEL_FRAMES} defaultProps={{ music: true, sfx: 0, stem: 0.7 }} {...SIZE} />
       <Folder name="Logo-Reveal">
         <Composition id="LogoReveal-9x16" component={LogoReveal} durationInFrames={LOGO_REVEAL_FRAMES} {...SIZE} />
         <Composition id="LogoReveal-16x9" component={LogoReveal} durationInFrames={LOGO_REVEAL_FRAMES} fps={FPS} width={1920} height={1080} />

@@ -31,13 +31,15 @@ export const SCENES: { id: string; component: React.FC; frames: number; cut?: { 
 
 export const REEL_FRAMES = SCENES.reduce((n, s) => n + s.frames, 0);
 
-export type ReelProps = { music: boolean; sfx?: number };
+export type ReelProps = { music: boolean; sfx?: number; stem?: number };
 
-export const Reel: React.FC<ReelProps> = ({ music, sfx = 0 }) => (
+export const Reel: React.FC<ReelProps> = ({ music, sfx = 0, stem = 0 }) => (
   <SfxGain.Provider value={sfx}>
     {music ? (
       <Audio src={staticFile("music/forward-pulse.wav")} volume={0.95} />
     ) : null}
+    {/* Sound-effects stem built by sfx/design.py, cued to the cuts above. */}
+    {stem > 0 ? <Audio src={staticFile("sfx/stem.wav")} volume={stem} /> : null}
     <Series>
       {SCENES.map(({ id, component: Scene, frames, cut }) => (
         <Series.Sequence key={id} name={id} durationInFrames={frames}>
