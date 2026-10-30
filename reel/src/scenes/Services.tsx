@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
 import { DISCIPLINES } from "../anatomy/Anatomy";
-import { accentFor, BottomBar, C, EASE, fgFor, prog, SANS, TopBar, Typewriter } from "../theme";
+import { accentFor, C, EASE, fgFor, prog, SANS, TopBar, Typewriter } from "../theme";
 
 export const SERVICE_FRAMES = 36;
 const BGS = [C.black, C.violet, C.lime, C.white, C.black, C.violet, C.lime];
@@ -16,16 +16,16 @@ const Service: React.FC<{ i: number }> = ({ i }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
       <TopBar left="Disciplines" right={`0${i + 1} / 07`} color={fg} />
-      <div style={{ position: "absolute", top: 210, left: 90, fontFamily: SANS, fontWeight: 400, fontSize: 52, color: fg }}>
+      <div style={{ position: "absolute", top: 270, left: 90, fontFamily: SANS, fontWeight: 400, fontSize: 52, color: fg }}>
         {i === 0 ? <Typewriter text="I bring ideas to life through" start={0} cps={2} hideCaretAfter={20} /> : "I bring ideas to life through"}
       </div>
-      <div style={{ position: "absolute", top: 380, left: 160 }}>
-        <Diagram fg={fg} accent={accentFor(bg)} size={760} />
+      <div style={{ position: "absolute", top: 380, left: 200 }}>
+        <Diagram fg={fg} accent={accentFor(bg)} size={680} />
       </div>
       <div
         style={{
           position: "absolute",
-          top: 1250,
+          top: 1090,
           left: 84,
           fontFamily: SANS,
           fontSize: 150,
@@ -42,7 +42,6 @@ const Service: React.FC<{ i: number }> = ({ i }) => {
           <span style={{ color: accentFor(bg) }}>.</span>
         </div>
       </div>
-      <BottomBar color={fg} />
     </AbsoluteFill>
   );
 };

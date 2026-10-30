@@ -37,7 +37,7 @@ export const Philosophy = () => {
           <line x1={540 - 620 * rings} x2={540 + 620 * rings} y1={960} y2={960} />
         </g>
       </svg>
-      <Label color={C.white} style={{ position: "absolute", top: 120, left: 90, opacity: 0.8 }}>
+      <Label color={C.white} style={{ position: "absolute", top: 200, left: 90, opacity: 0.8 }}>
         Philosophy
       </Label>
       <div style={{ position: "absolute", top: 780, width: "100%", textAlign: "center" }}>

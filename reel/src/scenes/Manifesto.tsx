@@ -42,12 +42,12 @@ const OneMind = () => {
     <AbsoluteFill style={{ backgroundColor: C.black }}>
       <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
         <g stroke={C.white} strokeWidth={1.5} fill="none" opacity={0.4}>
-          <circle cx={540} cy={1400} r={160} {...draw(p)} />
-          <circle cx={540} cy={1400} r={260} {...draw(p)} />
+          <circle cx={540} cy={1150} r={160} {...draw(p)} />
+          <circle cx={540} cy={1150} r={260} {...draw(p)} />
         </g>
-        <circle cx={540} cy={1400} r={36 * p} fill={C.lime} />
+        <circle cx={540} cy={1150} r={36 * p} fill={C.lime} />
       </svg>
-      <Headline a="One" b="mind" color={C.white} accent={C.lime} top={560} />
+      <Headline a="One" b="mind" color={C.white} accent={C.lime} top={420} />
     </AbsoluteFill>
   );
 };
@@ -58,12 +58,12 @@ const Multiple = () => {
   const fg = fgFor(bg);
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
-      <div style={{ position: "absolute", top: 860, left: 90, right: 90, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "40px 50px" }}>
+      <div style={{ position: "absolute", top: 720, left: 90, right: 90, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "40px 50px" }}>
         {DISCIPLINES.map(({ name, Diagram }) => (
           <Diagram key={name.join()} fg={fg} accent={accentFor(bg)} size={230} speed={1.6} />
         ))}
       </div>
-      <Headline a="Multiple" b="disciplines" color={fg} accent={C.lime} top={380} />
+      <Headline a="Multiple" b="disciplines" color={fg} accent={C.lime} top={300} />
     </AbsoluteFill>
   );
 };
@@ -75,17 +75,17 @@ const Endless = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: C.lime }}>
       <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
-        <g stroke={C.black} strokeWidth={1.5} opacity={0.35} transform={`rotate(${frame * 0.6} 540 1380)`}>
+        <g stroke={C.black} strokeWidth={1.5} opacity={0.35} transform={`rotate(${frame * 0.6} 540 1180)`}>
           {Array.from({ length: 36 }, (_, i) => {
             const a = (i / 36) * Math.PI * 2;
             return (
-              <line key={i} x1={540 + Math.cos(a) * 90} y1={1380 + Math.sin(a) * 90} x2={540 + Math.cos(a) * (90 + 900 * p)} y2={1380 + Math.sin(a) * (90 + 900 * p)} />
+              <line key={i} x1={540 + Math.cos(a) * 90} y1={1180 + Math.sin(a) * 90} x2={540 + Math.cos(a) * (90 + 900 * p)} y2={1180 + Math.sin(a) * (90 + 900 * p)} />
             );
           })}
         </g>
-        <circle cx={540} cy={1380} r={90} fill="none" stroke={C.black} strokeWidth={3} {...draw(p)} />
+        <circle cx={540} cy={1180} r={90} fill="none" stroke={C.black} strokeWidth={3} {...draw(p)} />
       </svg>
-      <Headline a="Endless" b="possibilities" color={C.black} accent={C.violet} top={420} />
+      <Headline a="Endless" b="possibilities" color={C.black} accent={C.violet} top={360} />
     </AbsoluteFill>
   );
 };

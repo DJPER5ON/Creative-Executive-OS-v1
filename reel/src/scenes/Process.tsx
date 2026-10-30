@@ -12,27 +12,27 @@ export const Process = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: C.white }}>
       <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
-        <circle cx={540} cy={300} r={22} fill="none" stroke={C.black} strokeWidth={3} opacity={top > 0 ? 1 : 0} />
-        <line x1={540} x2={540} y1={322} y2={322 + 400 * top} stroke={C.black} strokeWidth={1.5} />
-        <circle cx={540} cy={740} r={8} fill="none" stroke={C.black} strokeWidth={1.5} opacity={top} />
-        <circle cx={540} cy={1180} r={8} fill="none" stroke={C.black} strokeWidth={1.5} opacity={bottom > 0 ? 1 : 0} />
-        <line x1={540} x2={540} y1={1188} y2={1188 + 410 * bottom} stroke={C.black} strokeWidth={1.5} />
-        <circle cx={540} cy={1620} r={24 * bottom} fill={C.violet} />
+        <circle cx={540} cy={340} r={22} fill="none" stroke={C.black} strokeWidth={3} opacity={top > 0 ? 1 : 0} />
+        <line x1={540} x2={540} y1={362} y2={362 + 300 * top} stroke={C.black} strokeWidth={1.5} />
+        <circle cx={540} cy={680} r={8} fill="none" stroke={C.black} strokeWidth={1.5} opacity={top} />
+        <circle cx={540} cy={1060} r={8} fill="none" stroke={C.black} strokeWidth={1.5} opacity={bottom > 0 ? 1 : 0} />
+        <line x1={540} x2={540} y1={1068} y2={1068 + 250 * bottom} stroke={C.black} strokeWidth={1.5} />
+        <circle cx={540} cy={1340} r={24 * bottom} fill={C.violet} />
       </svg>
-      <Label color={C.black} style={{ position: "absolute", top: 230, width: "100%", textAlign: "center" }}>
+      <Label color={C.black} style={{ position: "absolute", top: 270, width: "100%", textAlign: "center" }}>
         First idea
       </Label>
-      <Label color={C.black} style={{ position: "absolute", top: 1670, width: "100%", textAlign: "center", opacity: bottom }}>
+      <Label color={C.black} style={{ position: "absolute", top: 1380, width: "100%", textAlign: "center", opacity: bottom }}>
         Final frame
       </Label>
-      <Label color={C.black} style={{ position: "absolute", top: 120, right: 90, opacity: 0.7 }}>
+      <Label color={C.black} style={{ position: "absolute", top: 200, right: 90, opacity: 0.7 }}>
         Frame {String(counter).padStart(4, "0")}
       </Label>
-      <div style={{ position: "absolute", top: 820, width: "100%", textAlign: "center", fontFamily: SANS, color: C.black, letterSpacing: -4 }}>
-        <div style={{ fontWeight: 300, fontSize: 100, opacity: l1, translate: `0 ${interpolate(l1, [0, 1], [30, 0])}px` }}>
+      <div style={{ position: "absolute", top: 740, width: "100%", textAlign: "center", fontFamily: SANS, color: C.black, letterSpacing: -4 }}>
+        <div style={{ fontWeight: 300, fontSize: 92, opacity: l1, translate: `0 ${interpolate(l1, [0, 1], [30, 0])}px` }}>
           From the first idea
         </div>
-        <div style={{ fontWeight: 700, fontSize: 112, marginTop: 10, opacity: l2, translate: `0 ${interpolate(l2, [0, 1], [30, 0])}px` }}>
+        <div style={{ fontWeight: 700, fontSize: 98, marginTop: 10, opacity: l2, translate: `0 ${interpolate(l2, [0, 1], [30, 0])}px` }}>
           to the <span style={{ color: C.violet }}>final frame.</span>
         </div>
       </div>

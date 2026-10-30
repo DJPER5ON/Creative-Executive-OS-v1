@@ -1,7 +1,7 @@
 import React from "react";
 import { useCurrentFrame } from "remotion";
 import { LOGO_PATH } from "../logo-path";
-import { draw, IN_OUT, MONO, prog } from "../theme";
+import { draw, IN_OUT, MONO, prog, SANS } from "../theme";
 
 /**
  * Hairline "anatomy" diagrams, one per discipline. Each draws on over ~22
@@ -237,32 +237,39 @@ export const Strategy: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed
   );
 };
 
-export const Consultancy: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed }) => {
+export const CreativeWriting: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed }) => {
   const p = useP(speed);
-  const circles = [
-    { x: 400, y: 300, label: "BUSINESS", lx: 400, ly: 70 },
-    { x: 290, y: 490, label: "BRAND", lx: 110, ly: 720 },
-    { x: 510, y: 490, label: "AUDIENCE", lx: 690, ly: 720 },
-  ];
-  const center = p(16, 22);
-  const labels = p(12, 20);
+  const frame = useCurrentFrame();
+  const guides = p(0, 10);
+  const glyphA = p(4, 10);
+  const glyphG = p(8, 14);
+  const labels = p(10, 18);
+  // Inter Tight metrics at 290px: cap ≈ 169, x-height ≈ 222, baseline 380, descender ≈ 438.
+  const metrics: [number, string][] = [[169, "CAP"], [222, "X-HEIGHT"], [380, "BASELINE"], [438, "DESCENDER"]];
+  const lines = [640, 560, 600, 380];
+  const typed = lines.map((_, i) => p(12 + i * 4, 18 + i * 4));
+  const caretX = 80 + lines[3] * typed[3] + 12;
+  const caretOn = typed[3] < 1 || Math.floor(frame / 8) % 2 === 0;
   return (
     <Frame size={size}>
-      {circles.map((c, i) => (
-        <g key={c.label}>
-          <circle cx={c.x} cy={c.y} r={200} stroke={fg} strokeWidth={LINE} fill="none" {...draw(p(i * 4, i * 4 + 14))} />
-          <T x={c.lx} y={c.ly} fill={fg} o={labels} anchor="middle">{c.label}</T>
-        </g>
-      ))}
-      <g stroke={fg} strokeWidth={HAIR} opacity={0.4 * labels}>
-        <line x1={400} y1={430} x2={400} y2={100} strokeDasharray="4 8" />
-        <line x1={400} y1={430} x2={150} y2={690} strokeDasharray="4 8" />
-        <line x1={400} y1={430} x2={650} y2={690} strokeDasharray="4 8" />
+      <g stroke={fg} strokeWidth={HAIR} opacity={0.5}>
+        {metrics.map(([y]) => (
+          <line key={y} x1={80} x2={80 + 640 * guides} y1={y} y2={y} strokeDasharray={y === 380 ? undefined : "4 8"} />
+        ))}
       </g>
-      <circle cx={400} cy={430} r={28 * center} fill={accent} />
-      <circle cx={400} cy={430} r={28 + 40 * center} fill="none" stroke={fg} strokeWidth={HAIR} opacity={0.6 * center} />
-      <line x1={400} y1={470} x2={400} y2={770} stroke={fg} strokeWidth={HAIR} opacity={center} />
-      <T x={400} y={800} fill={fg} o={center} anchor="middle">DIRECTION</T>
+      {metrics.map(([y, l]) => (
+        <T key={l} x={720} y={y - 10} fill={fg} o={labels} anchor="end" size={20}>{l}</T>
+      ))}
+      <text x={96} y={380} fill={fg} style={{ fontFamily: SANS, fontWeight: 700, fontSize: 290, letterSpacing: -8 }}>
+        <tspan fillOpacity={glyphA}>A</tspan>
+        <tspan fillOpacity={glyphG}>g</tspan>
+      </text>
+      <T x={80} y={505} fill={fg} o={labels} size={20}>BODY COPY</T>
+      {lines.map((w, i) => (
+        <rect key={i} x={80} y={540 + i * 50} width={w * typed[i]} height={18} rx={9} fill={fg} opacity={0.85} />
+      ))}
+      <rect x={260} y={590} width={170 * typed[1]} height={18} rx={9} fill={accent} />
+      <rect x={caretX} y={680} width={4} height={36} fill={accent} opacity={typed[0] > 0 && caretOn ? 1 : 0} />
     </Frame>
   );
 };
@@ -367,8 +374,8 @@ export const DISCIPLINES: { name: [string, string]; Diagram: React.FC<AnatomyPro
   { name: ["Motion", "Graphics"], Diagram: MotionGraphics },
   { name: ["UI/UX", "Design"], Diagram: UIUX },
   { name: ["", "Branding"], Diagram: Branding },
+  { name: ["Creative", "Writing"], Diagram: CreativeWriting },
   { name: ["Creative", "Strategy"], Diagram: Strategy },
-  { name: ["Creative", "Consultancy"], Diagram: Consultancy },
   { name: ["Music", "Production"], Diagram: MusicProduction },
   { name: ["Sound", "Design"], Diagram: SoundDesign },
 ];

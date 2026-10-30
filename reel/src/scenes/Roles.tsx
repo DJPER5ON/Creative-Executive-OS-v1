@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
-import { accentFor, BottomBar, C, EASE, fgFor, prog, SANS, TopBar } from "../theme";
+import { accentFor, C, EASE, fgFor, prog, SANS, TopBar } from "../theme";
 
 export const ROLE_FRAMES = 24;
 
@@ -51,7 +51,6 @@ const Role: React.FC<{ i: number }> = ({ i }) => {
         </div>
         <Mark kind={r.mark} color={accentFor(r.bg)} />
       </div>
-      <BottomBar color={fg} />
     </AbsoluteFill>
   );
 };

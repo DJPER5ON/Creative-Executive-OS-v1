@@ -9,14 +9,14 @@ export const EndCard = () => {
   const rest = prog(frame, 18, 28, EASE);
   return (
     <AbsoluteFill style={{ backgroundColor: C.black }}>
-      <Guides color={C.white} xs={[90, 990]} ys={[820, 1100]} opacity={0.3} fadeOutAt={60} />
-      <div style={{ position: "absolute", top: 380, left: 540, translate: "-50% 0" }}>
+      <Guides color={C.white} xs={[90, 990]} ys={[740, 1000]} opacity={0.3} fadeOutAt={60} />
+      <div style={{ position: "absolute", top: 330, left: 540, translate: "-50% 0" }}>
         <Logo size={320} color={C.white} outline={prog(frame, 0, 14, IN_OUT)} fill={prog(frame, 10, 18)} />
       </div>
       <div
         style={{
           position: "absolute",
-          top: 820,
+          top: 740,
           width: "100%",
           textAlign: "center",
           fontFamily: SANS,
@@ -31,15 +31,15 @@ export const EndCard = () => {
         <div style={{ fontWeight: 300 }}>Elmohanad</div>
         <div style={{ fontWeight: 700 }}>Karoum</div>
       </div>
-      <div style={{ position: "absolute", top: 1120, width: "100%", textAlign: "center", opacity: rest }}>
+      <div style={{ position: "absolute", top: 1030, width: "100%", textAlign: "center", opacity: rest }}>
         <Label color={C.white} style={{ fontSize: 34 }}>aka DJPER5ON</Label>
-        <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 88, letterSpacing: -2, color: C.lime, marginTop: 70 }}>
+        <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 88, letterSpacing: -2, color: C.lime, marginTop: 50 }}>
           @djper5on
         </div>
       </div>
       <Label
         color={C.white}
-        style={{ position: "absolute", bottom: 180, width: "100%", textAlign: "center", fontSize: 30, lineHeight: 1.6, opacity: 0.85 * rest }}
+        style={{ position: "absolute", top: 1360, width: "100%", textAlign: "center", fontSize: 30, lineHeight: 1.6, opacity: 0.85 * rest }}
       >
         Available for creative projects
         <br />& collaborations

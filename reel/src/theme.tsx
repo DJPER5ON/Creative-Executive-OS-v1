@@ -152,7 +152,7 @@ export const TopBar: React.FC<{ left: string; right?: string; color: string }> =
   <div
     style={{
       position: "absolute",
-      top: 120,
+      top: 200,
       left: 90,
       right: 90,
       display: "flex",
@@ -161,23 +161,5 @@ export const TopBar: React.FC<{ left: string; right?: string; color: string }> =
   >
     <Label color={color}>{left}</Label>
     {right ? <Label color={color}>{right}</Label> : null}
-  </div>
-);
-
-/** Bottom bar: name left, alias right. Keeps the brand present on every scene. */
-export const BottomBar: React.FC<{ color: string }> = ({ color }) => (
-  <div
-    style={{
-      position: "absolute",
-      bottom: 120,
-      left: 90,
-      right: 90,
-      display: "flex",
-      justifyContent: "space-between",
-      opacity: 0.7,
-    }}
-  >
-    <Label color={color}>Elmohanad Karoum</Label>
-    <Label color={color}>@djper5on</Label>
   </div>
 );

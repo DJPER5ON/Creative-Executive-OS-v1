@@ -19,7 +19,7 @@ export const Cta = () => {
           left: 84,
           fontFamily: SANS,
           fontWeight: 700,
-          fontSize: 132,
+          fontSize: 116,
           letterSpacing: -5,
           lineHeight: 1.04,
           color: C.white,
@@ -31,10 +31,10 @@ export const Cta = () => {
         <div>something</div>
         <div style={{ position: "relative", display: "inline-block", color: C.lime }}>
           extraordinary.
-          <svg width={920} height={170} style={{ position: "absolute", left: -12, top: -8, overflow: "visible" }}>
-            <rect x={0} y={0} width={920} height={160} fill="none" stroke={C.white} strokeWidth={2} {...draw(box)} />
-            {[0, 920].flatMap((x) =>
-              [0, 160].map((y) => (
+          <svg width={820} height={150} style={{ position: "absolute", left: -12, top: -8, overflow: "visible" }}>
+            <rect x={0} y={0} width={820} height={142} fill="none" stroke={C.white} strokeWidth={2} {...draw(box)} />
+            {[0, 820].flatMap((x) =>
+              [0, 142].map((y) => (
                 <rect key={`${x}${y}`} x={x - 9} y={y - 9} width={18} height={18} fill={C.violet} stroke={C.white} strokeWidth={2} opacity={box} />
               )),
             )}
