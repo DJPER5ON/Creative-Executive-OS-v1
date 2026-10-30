@@ -1,8 +1,6 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
-import { BEAT, C, Cut, draw, IN_OUT, Label, prog, SANS, Sfx, slam } from "../theme";
-
-const SWAP = 3 * BEAT;
+import { C, Cut, draw, IN_OUT, Label, prog, SANS, slam } from "../theme";
 
 /** Hairline selection box with corner handles, like a design tool. */
 const Selection: React.FC<{ p: number; w: number; h: number; color: string }> = ({ p, w, h, color }) => (
@@ -16,19 +14,16 @@ const Selection: React.FC<{ p: number; w: number; h: number; color: string }> = 
   </svg>
 );
 
-/** "Creativity is my playground. And I love to play." on a hairline target. */
+/** "Creativity is my playground." on a hairline target. */
 export const Philosophy = () => {
   const frame = useCurrentFrame();
   const rings = prog(frame, 0, 24, IN_OUT);
-  const first = frame < SWAP;
-  const t = first ? frame : frame - SWAP;
+  const t = frame;
   const sel = prog(frame, 16, 30, IN_OUT);
   const text: React.CSSProperties = { fontFamily: SANS, letterSpacing: -4, lineHeight: 1.05, color: C.white };
   return (
     <Cut flash={C.lime} sound="hit" volume={0.6} seed="philo">
-    <AbsoluteFill style={{ backgroundColor: C.violet, scale: first ? 1 : 1.04 }}>
-      <Sfx name="hit" at={SWAP} volume={0.55} />
-      <Sfx name="zap" at={SWAP} volume={0.35} />
+    <AbsoluteFill style={{ backgroundColor: C.violet }}>
       <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
         <g stroke={C.white} strokeWidth={1.5} fill="none" opacity={0.35}>
           {[180, 330, 480].map((r) => (
@@ -42,30 +37,16 @@ export const Philosophy = () => {
         Philosophy
       </Label>
       <div style={{ position: "absolute", top: 780, width: "100%", textAlign: "center" }}>
-        {first ? (
-          <>
             <div style={{ ...text, fontWeight: 300, fontSize: 104, ...slam(t, 0, 8) }}>
-              Creativity is my
-            </div>
-            <div style={{ position: "relative", display: "inline-block", marginTop: 14 }}>
-              <div style={{ ...text, fontWeight: 700, fontSize: 140, color: C.lime, padding: "0 10px", ...slam(t, 6, 8) }}>
-                playground.
-              </div>
-              <Selection p={sel} w={780} h={150} color={C.white} />
-            </div>
-          </>
-        ) : (
-          <>
-            <div style={{ ...text, fontWeight: 300, fontSize: 104, ...slam(t, 0, 8) }}>
-              And I love
-            </div>
-            <div style={{ ...text, fontWeight: 700, fontSize: 150, marginTop: 14, ...slam(t, 6, 8) }}>
-              to play<span style={{ color: C.lime }}>.</span>
-            </div>
-          </>
-        )}
+          Creativity is my
+        </div>
+        <div style={{ position: "relative", display: "inline-block", marginTop: 14 }}>
+          <div style={{ ...text, fontWeight: 700, fontSize: 140, color: C.lime, padding: "0 10px", ...slam(t, 6, 8) }}>
+            playground.
+          </div>
+          <Selection p={sel} w={780} h={150} color={C.white} />
+        </div>
       </div>
-      {frame === SWAP || frame === SWAP + 1 ? <AbsoluteFill style={{ backgroundColor: C.lime }} /> : null}
     </AbsoluteFill>
     </Cut>
   );

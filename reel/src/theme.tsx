@@ -133,7 +133,7 @@ export const Typewriter: React.FC<{
   style?: React.CSSProperties;
   render?: (shown: string) => React.ReactNode;
   sound?: boolean;
-}> = ({ text, start, cps = 0.6, caret = C.lime, hideCaretAfter, style, render, sound = true }) => {
+}> = ({ text, start, cps = 0.6, caret = C.lime, hideCaretAfter, style, render, sound = false }) => {
   const frame = useCurrentFrame();
   const n = Math.max(0, Math.min(text.length, Math.floor((frame - start) * cps)));
   const shown = text.slice(0, n);

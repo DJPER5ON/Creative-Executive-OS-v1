@@ -4,7 +4,7 @@ Most effects are cut from the music itself (public/music/forward-pulse.wav,
 already aligned to the reel's beat grid), so they share its sound: reversed
 swells into cuts, stutter-gated slices on the drop, impacts layered with the
 track's own transient. The rest are modelled: wooden slate clacks, two-stage
-keyboard clicks, stereo whooshes, a riser and a liquid morph.
+stereo whooshes, ratchet ticks, a vinyl scratch, a riser and a liquid morph.
 
 Run from reel/:  python3 sfx/design.py   → public/sfx/stem.wav
 Cue frames mirror src/Reel.tsx and the scene files; keep them in sync.
@@ -94,17 +94,6 @@ def ui_tick(bright=1.0):
     ping = np.sin(2 * np.pi * 3800 * bright * t) * np.exp(-t * 180)
     snap = filt(rng.standard_normal(len(t)), "bandpass", [2500, 9000]) * np.exp(-t * 600)
     return stereo(0.5 * ping + 0.6 * snap)
-
-
-def key_click():
-    """A keyboard key: soft 'thock' on the way down, small click on release."""
-    t = t_(0.09)
-    down = filt(rng.standard_normal(len(t)), "bandpass", [700, 2600]) * np.exp(-t * 160)
-    body = np.sin(2 * np.pi * rng.uniform(280, 360) * t) * np.exp(-t * 120) * 0.5
-    up = np.zeros(len(t))
-    j = int(rng.uniform(0.035, 0.05) * SR)
-    up[j:] = filt(rng.standard_normal(len(t) - j), "highpass", 3000) * np.exp(-t[: len(t) - j] * 700) * 0.35
-    return stereo((down + body + up) * rng.uniform(0.6, 1.0), rng.uniform(-0.25, 0.25))
 
 
 def whoosh(sec=0.45, pan_from=-0.6, pan_to=0.6):
@@ -241,26 +230,45 @@ def place(x, frame, gain=1.0, end_at=False):
     stem[i : i + len(x)] += x[: len(stem) - i] * gain
 
 
-def typing(start_frame, chars, cps):
-    for k in range(chars):
-        place(key_click(), start_frame + k / cps, 0.32)
+def vinyl_scratch(at, sec=0.4):
+    """Scratch the track itself: play a slice back and forth like a hand on the record."""
+    src = music_slice(at, 0.6)
+    t = t_(sec)
+    pos = (0.15 + 0.12 * np.sin(2 * np.pi * 5 * t) * np.exp(-t * 2)) * SR  # read head, in samples
+    i0 = np.clip(pos.astype(int), 0, len(src) - 2)
+    frac = (pos - i0)[:, None]
+    out = src[i0] * (1 - frac) + src[i0 + 1] * frac
+    out = filt(out, "bandpass", [300, 6000]) * np.sin(np.pi * t / sec)[:, None]
+    return out / (np.abs(out).max() + 1e-9)
+
+
+def pop():
+    """Small soft pop for a word landing (replaces per-letter typing)."""
+    t = t_(0.08)
+    f = 900 * np.exp(-t * 40) + 300
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 60)
+    return stereo(x * 0.8)
 
 
 # Scene cut frames (src/Reel.tsx, 16-frame beats).
-INTRO, NAME, ROLES, PHILO, SERVICES, PROCESS, MANIFESTO, CTA, END = 0, 64, 128, 176, 256, 512, 576, 672, 736
+INTRO, NAME, ROLES, PHILO, WHEEL, SERVICES, PROCESS, MANIFESTO, CTA, MONTAGE, NAMECARD, FINAL = (
+    0, 64, 128, 176, 224, 288, 544, 576, 672, 720, 768, 832,
+)
 SERVICE = 32
+WHEEL_FRAMES, WHEEL_TRAVEL = 64, 24
 F = lambda frame: frame / FPS  # noqa: E731
 
-# Intro: whoosh in, logo snaps solid, "Hello." typed.
+# Intro: whoosh in, logo snaps solid, pop as "Hello." lands.
 place(whoosh(0.6, -0.8, 0.2), 4, 0.35)
 place(impact_from_music(F(22), 0.7), 22, 0.55)
-typing(33, 6, 0.7)
+place(ui_tick(1.0), 33, 0.45)
+place(pop(), 42, 0.5)
 
-# Name: reverse swell into the cut, typed name, portrait rises.
+# Name: reverse swell into the cut, a tick as each line lands, portrait rises.
 place(reverse_swell(F(NAME)), NAME, 0.45, end_at=True)
 place(ui_tick(1.1), NAME, 0.6)
-typing(NAME + 2, 9, 1)
-typing(NAME + 12, 6, 1)
+place(pop(), NAME + 11, 0.45)
+place(pop(), NAME + 18, 0.45)
 place(whoosh(0.5, 0.5, -0.5), NAME + 12, 0.3)
 
 # Roles: a tick and glitch per role.
@@ -268,11 +276,27 @@ for k in range(3):
     place(ui_tick(1 + 0.15 * k), ROLES + 16 * k, 0.55)
     place(glitch(), ROLES + 16 * k, 0.35)
 
-# Philosophy: swell in, stutter on the swap.
+# Philosophy: swell in, pop as "playground." lands.
 place(reverse_swell(F(PHILO), 0.45), PHILO, 0.4, end_at=True)
-place(stutter(F(PHILO + 48), 3), PHILO + 48, 0.35)
+place(ui_tick(1.0), PHILO, 0.5)
+place(pop(), PHILO + 6, 0.45)
 
-# Services: the kick enters here; each card gets a whoosh, tick and glitch.
+# Wheel: a ratchet tick each time a name passes the centre, following the
+# wheel's own motion (src/scenes/Wheel.tsx: cubic ease-out over frames 4..56).
+place(stutter(F(WHEEL), 2), WHEEL, 0.3)
+last = -1.0
+prev = None
+for fr in np.arange(4, WHEEL_FRAMES - 8 + 0.01, 0.1):
+    x = (fr - 4) / (WHEEL_FRAMES - 12)
+    pos = -WHEEL_TRAVEL * (1 - (1 - (1 - x) ** 3))
+    cell = np.floor(pos)
+    if prev is not None and cell != prev and F(fr) - last > 0.03:
+        place(ui_tick(1.3), WHEEL + fr, 0.35)
+        last = F(fr)
+    prev = cell
+place(impact_from_music(F(WHEEL + WHEEL_FRAMES - 8), 0.5), WHEEL + WHEEL_FRAMES - 8, 0.35)
+
+# Services: each card gets a whoosh, tick, glitch and a short stutter.
 for k in range(8):
     fr = SERVICES + SERVICE * k
     place(whoosh(0.35, -0.5 if k % 2 else 0.5, 0.5 if k % 2 else -0.5), fr, 0.45, end_at=True)
@@ -282,11 +306,10 @@ for k in range(8):
 place(shutter(), SERVICES + SERVICE, 0.5)
 place(slate_clap(), SERVICES + SERVICE + 8, 0.75)
 
-# Process (breakdown): a whoosh into the cut, then ticks on each line.
+# Process: two lines, one per beat.
 place(whoosh(0.4, 0.6, -0.6), PROCESS, 0.4, end_at=True)
 place(ui_tick(1.0), PROCESS, 0.6)
-place(ui_tick(0.8), PROCESS + 4, 0.45)
-place(ui_tick(0.9), PROCESS + 26, 0.45)
+place(ui_tick(0.85), PROCESS + 16, 0.55)
 
 # Manifesto (the drop): reverse swell, then impact + stutter on each line.
 place(reverse_swell(F(MANIFESTO), 0.9), MANIFESTO, 0.6, end_at=True)
@@ -294,17 +317,34 @@ for k, fr in enumerate((MANIFESTO, MANIFESTO + 32, MANIFESTO + 64)):
     place(impact_from_music(F(fr), 0.8), fr, 0.55 if k == 0 else 0.4)
     place(stutter(F(fr), 4), fr, 0.3)
 
-# CTA: typing, riser to the end card, hit on "Let's create".
-typing(CTA + 4, 23, 1.1)
-place(riser(F(END) - F(CTA)), END, 0.38, end_at=True)
-place(impact_from_music(F(CTA + 32), 0.6), CTA + 32, 0.4)
+# CTA: tick as the question appears, hit on "Let's create" (beat 1).
+place(ui_tick(1.0), CTA, 0.55)
+place(impact_from_music(F(CTA + 16), 0.6), CTA + 16, 0.45)
+place(riser(F(MONTAGE) - F(CTA + 16)), MONTAGE, 0.3, end_at=True)
 
-# End card: big impact, liquid morph into PER5ON, final hit.
-place(impact_from_music(F(END), 1.2), END, 0.7)
-place(glitch(0.15), END, 0.3)
-place(liquid_morph(F(END + 80) - F(END + 60)), END + 60, 0.45)
-place(impact_from_music(F(END + 80), 0.9), END + 80, 0.5)
-place(ui_tick(0.9), END + 20, 0.4)
+# Montage: a cut every half beat, each with its own sound.
+cuts = [MONTAGE + 8 * k for k in range(6)]
+for k, fr in enumerate(cuts):
+    place(stutter(F(fr), 2), fr, 0.3)
+    place(glitch(0.07), fr, 0.35)
+place(shutter(), cuts[0], 0.7)                         # Shoot: camera shutter
+place(vinyl_scratch(F(cuts[1])), cuts[1], 0.45)        # Spin: scratch the track
+place(ui_tick(1.4), cuts[2], 0.55)                     # Mix
+place(ui_tick(1.7), cuts[3], 0.5)                      # Compose
+place(pop(), cuts[4], 0.55)                            # Record
+place(impact_from_music(F(cuts[5]), 0.5), cuts[5], 0.4)  # Design
+
+# Name card: impact on the cut, liquid morph into PER5ON, hit as it lands.
+place(impact_from_music(F(NAMECARD), 1.0), NAMECARD, 0.65)
+place(liquid_morph(F(20)), NAMECARD + 28, 0.45)
+place(impact_from_music(F(NAMECARD + 48), 0.8), NAMECARD + 48, 0.55)
+
+# Final call to action: swell in, impact, tick per line, pop on "DMs open".
+place(reverse_swell(F(FINAL), 0.4), FINAL, 0.4, end_at=True)
+place(impact_from_music(F(FINAL), 1.0), FINAL, 0.65)
+for k in range(4):
+    place(ui_tick(1.0 + 0.1 * k), FINAL + 3 * k, 0.5)
+place(pop(), FINAL + 16, 0.6)
 
 stem = stem[:N]
 stem = np.tanh(stem * 1.2) / np.tanh(1.2)

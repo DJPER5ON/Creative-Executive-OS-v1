@@ -9,16 +9,16 @@ import { draw, IN_OUT, MONO, prog, SANS, Sfx } from "../theme";
  */
 export type AnatomyProps = { fg: string; accent: string; size?: number; speed?: number; sound?: boolean };
 
-const HAIR = 1.5;
-const LINE = 3;
+export const HAIR = 1.5;
+export const LINE = 3;
 
-const Frame: React.FC<{ size: number; children: React.ReactNode }> = ({ size, children }) => (
+export const Frame: React.FC<{ size: number; children: React.ReactNode }> = ({ size, children }) => (
   <svg width={size} height={size} viewBox="0 0 800 800" style={{ overflow: "visible" }}>
     {children}
   </svg>
 );
 
-const T: React.FC<{
+export const T: React.FC<{
   x: number;
   y: number;
   fill: string;
@@ -39,7 +39,7 @@ const T: React.FC<{
   </text>
 );
 
-const useP = (speed = 1) => {
+export const useP = (speed = 1) => {
   const f = useCurrentFrame() * speed;
   return (a: number, b: number) => prog(f, a, b, IN_OUT);
 };
