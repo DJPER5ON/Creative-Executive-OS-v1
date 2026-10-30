@@ -1,6 +1,6 @@
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { Logo } from "../Logo";
-import { C, EASE, Guides, IN_OUT, Label, prog, SANS, Typewriter } from "../theme";
+import { C, EASE, Guides, IN_OUT, Label, prog, SANS, Sfx, Typewriter } from "../theme";
 
 /** Logo draws itself in on hairline guides, then "Hello." types out. */
 export const Intro = () => {
@@ -8,6 +8,8 @@ export const Intro = () => {
   const settle = prog(frame, 26, 38, IN_OUT);
   return (
     <AbsoluteFill style={{ backgroundColor: C.black }}>
+      <Sfx name="whoosh" volume={0.5} />
+      <Sfx name="hit" at={22} volume={0.85} />
       <Guides color={C.white} xs={[240, 840]} ys={[660, 1260]} />
       <Label color={C.white} style={{ position: "absolute", top: 1278, left: 256, opacity: 0.6 * prog(frame, 10, 20) }}>
         X 240 · Y 1260

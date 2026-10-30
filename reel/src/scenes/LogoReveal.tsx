@@ -1,6 +1,6 @@
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { Logo } from "../Logo";
-import { C, draw, EASE, IN_OUT, prog } from "../theme";
+import { C, draw, EASE, IN_OUT, prog, Sfx } from "../theme";
 
 export const LOGO_REVEAL_FRAMES = 180;
 
@@ -30,6 +30,10 @@ export const LogoReveal = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: C.black }}>
+      <Sfx name="whoosh" at={4} volume={0.5} />
+      <Sfx name="type" at={20} volume={0.25} durationInFrames={40} />
+      <Sfx name="boom" at={60} volume={0.9} />
+      <Sfx name="zap" at={60} volume={0.35} />
       <svg width={width} height={height} style={{ position: "absolute", inset: 0 }}>
         <g stroke={C.white} strokeWidth={1.5} fill="none" opacity={0.35 * guides}>
           <line x1={cx - reach * axes} x2={cx + reach * axes} y1={cy} y2={cy} />

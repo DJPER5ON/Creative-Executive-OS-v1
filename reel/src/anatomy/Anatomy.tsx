@@ -1,13 +1,13 @@
 import React from "react";
-import { useCurrentFrame } from "remotion";
+import { Easing, interpolate, useCurrentFrame } from "remotion";
 import { LOGO_PATH } from "../logo-path";
-import { draw, IN_OUT, MONO, prog, SANS } from "../theme";
+import { draw, IN_OUT, MONO, prog, SANS, Sfx } from "../theme";
 
 /**
  * Hairline "anatomy" diagrams, one per discipline. Each draws on over ~22
  * frames from its own frame 0, inside an 800 × 800 viewBox.
  */
-export type AnatomyProps = { fg: string; accent: string; size?: number; speed?: number };
+export type AnatomyProps = { fg: string; accent: string; size?: number; speed?: number; sound?: boolean };
 
 const HAIR = 1.5;
 const LINE = 3;
@@ -94,31 +94,63 @@ export const MotionGraphics: React.FC<AnatomyProps> = ({ fg, accent, size = 800,
   );
 };
 
-export const Filmmaking: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed }) => {
+/** Frame (in diagram time) at which the slate's clapstick snaps shut. */
+export const SLATE_CLAP = 9;
+
+export const Filmmaking: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed, sound }) => {
   const p = useP(speed);
-  const frame = useCurrentFrame();
-  const frameIn = p(0, 12);
-  const thirds = p(6, 14);
-  const focus = p(12, 20);
-  const track = p(8, 20);
-  const head = p(12, 34);
-  const labels = p(12, 20);
-  const x0 = 80, y0 = 160, w = 640, h = 360;
-  const tc = Math.floor(frame * (speed ?? 1));
+  const frame = useCurrentFrame() * (speed ?? 1);
+  const board = p(0, 6);
+  const stick = interpolate(frame, [2, SLATE_CLAP], [-32, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
+  const bounce = frame >= SLATE_CLAP && frame < SLATE_CLAP + 3 ? -3 : 0;
+  const fields = p(8, 14);
+  const vf = p(10, 20);
+  const focus = p(16, 24);
+  const labels = p(14, 22);
+  const tc = Math.max(0, Math.floor(frame - 10));
   const timecode = `00:00:${String(Math.floor(tc / 24)).padStart(2, "0")}:${String(tc % 24).padStart(2, "0")}`;
-  const clips: [number, number][] = [[80, 200], [288, 150], [446, 274]];
-  const headX = 80 + 640 * head;
-  const corner = (x: number, y: number, dx: number, dy: number) => `M${x + dx * 50},${y} L${x},${y} L${x},${y + dy * 50}`;
+  // Slate geometry
+  const bx = 150, by = 150, bw = 500, bh = 230;
+  const stripes = Array.from({ length: 6 }, (_, i) => i);
+  // Viewfinder geometry
+  const x0 = 150, y0 = 470, w = 500, h = 281;
+  const corner = (x: number, y: number, dx: number, dy: number) => `M${x + dx * 40},${y} L${x},${y} L${x},${y + dy * 40}`;
   return (
     <Frame size={size}>
-      <rect x={x0} y={y0} width={w} height={h} fill="none" stroke={fg} strokeWidth={HAIR} opacity={0.5} {...draw(frameIn)} />
-      <g stroke={fg} strokeWidth={LINE} fill="none" opacity={frameIn}>
-        <path d={corner(x0 + 24, y0 + 24, 1, 1)} />
-        <path d={corner(x0 + w - 24, y0 + 24, -1, 1)} />
-        <path d={corner(x0 + 24, y0 + h - 24, 1, -1)} />
-        <path d={corner(x0 + w - 24, y0 + h - 24, -1, -1)} />
+      {sound ? <Sfx name="clap" at={Math.round(SLATE_CLAP / (speed ?? 1))} volume={0.9} /> : null}
+      {/* Clapperboard */}
+      <g opacity={board}>
+        <g transform={`rotate(${stick + bounce} ${bx} ${by - 6})`}>
+          <rect x={bx} y={by - 66} width={bw} height={60} fill="none" stroke={fg} strokeWidth={LINE} />
+          {stripes.map((i) => (
+            <path key={i} d={`M${bx + 20 + i * 85},${by - 66} l40,0 l-30,60 l-40,0 z`} fill={i % 2 ? "none" : fg} stroke={fg} strokeWidth={HAIR} />
+          ))}
+        </g>
+        <rect x={bx} y={by} width={bw} height={56} fill="none" stroke={fg} strokeWidth={LINE} />
+        {stripes.map((i) => (
+          <path key={i} d={`M${bx + 20 + i * 85},${by} l40,0 l-30,56 l-40,0 z`} fill={i % 2 ? fg : "none"} stroke={fg} strokeWidth={HAIR} />
+        ))}
+        <rect x={bx} y={by + 56} width={bw} height={bh - 56} fill="none" stroke={fg} strokeWidth={LINE} />
+        <g stroke={fg} strokeWidth={HAIR} opacity={fields}>
+          <line x1={bx} x2={bx + bw} y1={by + 140} y2={by + 140} />
+          <line x1={bx + bw / 3} x2={bx + bw / 3} y1={by + 140} y2={by + bh} />
+          <line x1={bx + (2 * bw) / 3} x2={bx + (2 * bw) / 3} y1={by + 140} y2={by + bh} />
+        </g>
+        <T x={bx + 20} y={by + 100} fill={fg} o={fields} size={30}>PROD. ELMOHANAD K.</T>
+        <T x={bx + 20} y={by + 180} fill={fg} o={fields} size={20}>SCENE 01</T>
+        <T x={bx + bw / 3 + 20} y={by + 180} fill={fg} o={fields} size={20}>TAKE 08</T>
+        <T x={bx + (2 * bw) / 3 + 20} y={by + 180} fill={fg} o={fields} size={20}>ROLL A</T>
+        <circle cx={bx} cy={by - 6} r={8} fill={accent} />
       </g>
-      <g stroke={fg} strokeWidth={HAIR} opacity={0.4 * thirds} strokeDasharray="4 8">
+      {/* Viewfinder */}
+      <rect x={x0} y={y0} width={w} height={h} fill="none" stroke={fg} strokeWidth={HAIR} opacity={0.5} {...draw(vf)} />
+      <g stroke={fg} strokeWidth={LINE} fill="none" opacity={vf}>
+        <path d={corner(x0 + 18, y0 + 18, 1, 1)} />
+        <path d={corner(x0 + w - 18, y0 + 18, -1, 1)} />
+        <path d={corner(x0 + 18, y0 + h - 18, 1, -1)} />
+        <path d={corner(x0 + w - 18, y0 + h - 18, -1, -1)} />
+      </g>
+      <g stroke={fg} strokeWidth={HAIR} opacity={0.4 * vf} strokeDasharray="4 8">
         {[1, 2].map((k) => (
           <line key={`v${k}`} x1={x0 + (w * k) / 3} x2={x0 + (w * k) / 3} y1={y0} y2={y0 + h} />
         ))}
@@ -126,37 +158,23 @@ export const Filmmaking: React.FC<AnatomyProps> = ({ fg, accent, size = 800, spe
           <line key={`h${k}`} x1={x0} x2={x0 + w} y1={y0 + (h * k) / 3} y2={y0 + (h * k) / 3} />
         ))}
       </g>
-      <g stroke={fg} strokeWidth={HAIR} opacity={thirds}>
-        <line x1={400 - 18} x2={400 + 18} y1={340} y2={340} />
-        <line x1={400} x2={400} y1={340 - 18} y2={340 + 18} />
-      </g>
       <rect
-        x={x0 + (w * 2) / 3 - 50}
-        y={y0 + h / 3 - 40}
-        width={100 * focus}
-        height={80 * focus}
+        x={x0 + (w * 2) / 3 - 40}
+        y={y0 + h / 3 - 32}
+        width={80}
+        height={64}
         fill="none"
         stroke={accent}
         strokeWidth={LINE}
-        transform={`translate(${50 * (1 - focus)} ${40 * (1 - focus)})`}
+        opacity={focus}
+        transform={`scale(${1 + 0.6 * (1 - focus)})`}
+        style={{ transformOrigin: `${x0 + (w * 2) / 3}px ${y0 + h / 3}px`, transformBox: "view-box" }}
       />
-      <circle cx={x0 + 46} cy={y0 - 36} r={10} fill={accent} opacity={labels * (Math.floor(frame / 10) % 2 === 0 ? 1 : 0.25)} />
-      <T x={x0 + 66} y={y0 - 28} fill={fg} o={labels}>REC</T>
-      <T x={x0 + w} y={y0 - 28} fill={fg} o={labels} anchor="end">{timecode}</T>
+      <circle cx={x0 + 12} cy={y0 - 30} r={10} fill={accent} opacity={labels * (Math.floor(frame / 8) % 2 === 0 ? 1 : 0.25)} />
+      <T x={x0 + 32} y={y0 - 22} fill={fg} o={labels}>REC</T>
+      <T x={x0 + w} y={y0 - 22} fill={fg} o={labels} anchor="end">{timecode}</T>
       <T x={x0} y={y0 + h + 40} fill={fg} o={labels} size={20}>RULE OF THIRDS</T>
       <T x={x0 + w} y={y0 + h + 40} fill={fg} o={labels} anchor="end" size={20}>16:9</T>
-      <line x1={80} x2={80 + 640 * track} y1={640} y2={640} stroke={fg} strokeWidth={HAIR} opacity={0.4} />
-      {clips.map(([x, cw], i) => (
-        <rect key={i} x={x} y={608} width={(cw - 8) * track} height={64} rx={6} fill={headX > x ? fg : "none"} fillOpacity={0.18} stroke={fg} strokeWidth={HAIR} />
-      ))}
-      {clips.slice(1).map(([x], i) => (
-        <g key={i} opacity={labels}>
-          <line x1={x - 4} x2={x - 4} y1={596} y2={684} stroke={accent} strokeWidth={LINE} />
-          <T x={x - 4} y={720} fill={fg} o={1} anchor="middle" size={20}>CUT</T>
-        </g>
-      ))}
-      <line x1={headX} x2={headX} y1={580} y2={700} stroke={fg} strokeWidth={LINE} opacity={head > 0 && head < 1 ? 1 : 0} />
-      <T x={80} y={720} fill={fg} o={labels} size={20}>SHOT 01</T>
     </Frame>
   );
 };

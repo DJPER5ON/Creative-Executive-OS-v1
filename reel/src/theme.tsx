@@ -1,6 +1,7 @@
 import { loadFont } from "@remotion/fonts";
+import { Audio } from "@remotion/media";
 import React from "react";
-import { Easing, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Easing, interpolate, random, Sequence, staticFile, useCurrentFrame } from "remotion";
 
 export const C = {
   black: "#000000",
@@ -28,6 +29,78 @@ for (const w of ["400", "500"]) {
 
 export const EASE = Easing.bezier(0.16, 1, 0.3, 1);
 export const IN_OUT = Easing.bezier(0.65, 0, 0.35, 1);
+/** Overshoots its target slightly before settling — for bold, punchy entrances. */
+export const BACK = Easing.bezier(0.34, 1.7, 0.5, 1);
+
+/** One beat in frames: 112.5 BPM at 30 fps. Scene lengths sit on this grid. */
+export const BEAT = 16;
+
+export type SfxName = "hit" | "whoosh" | "zap" | "type" | "tick" | "clap" | "riser" | "boom" | "shutter";
+
+/** A sound effect from public/sfx, starting at frame `at` of the current sequence. */
+export const Sfx: React.FC<{ name: SfxName; at?: number; volume?: number; durationInFrames?: number }> = ({
+  name,
+  at = 0,
+  volume = 0.8,
+  durationInFrames,
+}) => (
+  <Sequence from={at} durationInFrames={durationInFrames} layout="none" name={`sfx:${name}`}>
+    <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume} />
+  </Sequence>
+);
+
+/**
+ * A hard cut with the reference's flicker: a two-frame flash of `flash`, a
+ * dropped frame, then the scene, with a short decaying camera shake and a
+ * sound on the cut.
+ */
+export const Cut: React.FC<{
+  children: React.ReactNode;
+  flash?: string;
+  sound?: SfxName | null;
+  volume?: number;
+  shake?: number;
+  seed?: string;
+}> = ({ children, flash = C.white, sound = "hit", volume = 0.7, shake = 18, seed = "cut" }) => {
+  const frame = useCurrentFrame();
+  const decay = Math.max(0, 1 - frame / 8);
+  const dx = (random(`${seed}x${frame}`) - 0.5) * 2 * shake * decay;
+  const dy = (random(`${seed}y${frame}`) - 0.5) * 2 * shake * decay;
+  const flashOn = frame === 0 || frame === 1 || frame === 4;
+  const dropped = frame === 2;
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{ translate: `${dx}px ${dy}px`, scale: 1 + 0.03 * decay, opacity: dropped ? 0 : 1 }}>
+        {children}
+      </AbsoluteFill>
+      {flashOn ? <AbsoluteFill style={{ backgroundColor: flash, opacity: frame === 4 ? 0.5 : 1 }} /> : null}
+      {sound ? <Sfx name={sound} volume={volume} /> : null}
+    </AbsoluteFill>
+  );
+};
+
+/** Style for a headline that slams in: oversized, blurred and low, then overshoots into place. */
+export const slam = (frame: number, start = 0, dur = 9): React.CSSProperties => {
+  const p = interpolate(frame, [start, start + dur], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: BACK,
+  });
+  const blur = interpolate(frame, [start, start + dur * 0.6], [16, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  return {
+    opacity: frame < start ? 0 : 1,
+    scale: interpolate(p, [0, 1], [1.4, 1]),
+    translate: `0 ${interpolate(p, [0, 1], [120, 0])}px`,
+    filter: blur > 0.1 ? `blur(${blur}px)` : undefined,
+  };
+};
+
+/** Opacity for a flicker-on: blinks on/off for a few frames, then stays on. */
+export const flicker = (frame: number, start = 0) => {
+  const f = frame - start;
+  if (f < 0) return 0;
+  return [1, 0, 1, 1, 0, 1][f] ?? 1;
+};
 
 /** 0 → 1 progress between two frames, eased and clamped. */
 export const prog = (frame: number, from: number, to: number, easing = EASE) =>
@@ -53,7 +126,8 @@ export const Typewriter: React.FC<{
   hideCaretAfter?: number;
   style?: React.CSSProperties;
   render?: (shown: string) => React.ReactNode;
-}> = ({ text, start, cps = 0.6, caret = C.lime, hideCaretAfter, style, render }) => {
+  sound?: boolean;
+}> = ({ text, start, cps = 0.6, caret = C.lime, hideCaretAfter, style, render, sound = true }) => {
   const frame = useCurrentFrame();
   const n = Math.max(0, Math.min(text.length, Math.floor((frame - start) * cps)));
   const shown = text.slice(0, n);
@@ -62,6 +136,7 @@ export const Typewriter: React.FC<{
     frame >= start && blinkOn && (hideCaretAfter === undefined || frame < hideCaretAfter);
   return (
     <span style={{ whiteSpace: "pre", ...style }}>
+      {sound ? <Sfx name="type" at={start} volume={0.55} durationInFrames={Math.ceil(text.length / cps)} /> : null}
       {render ? render(shown) : shown}
       <span
         style={{

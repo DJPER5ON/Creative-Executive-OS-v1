@@ -1,13 +1,12 @@
 import React from "react";
-import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Series, useCurrentFrame } from "remotion";
 import { DISCIPLINES } from "../anatomy/Anatomy";
-import { accentFor, C, draw, EASE, fgFor, IN_OUT, prog, SANS } from "../theme";
+import { accentFor, BEAT, C, Cut, draw, fgFor, IN_OUT, prog, SANS, slam } from "../theme";
 
-export const MANIFESTO_FRAMES = 36;
+export const MANIFESTO_FRAMES = 2 * BEAT;
 
 const Headline: React.FC<{ a: string; b: string; color: string; accent: string; top: number }> = ({ a, b, color, accent, top }) => {
   const frame = useCurrentFrame();
-  const p = prog(frame, 0, 10, EASE);
   return (
     <div
       style={{
@@ -21,8 +20,7 @@ const Headline: React.FC<{ a: string; b: string; color: string; accent: string; 
         letterSpacing: -5,
         lineHeight: 1.02,
         color,
-        opacity: p,
-        translate: `0 ${interpolate(p, [0, 1], [50, 0])}px`,
+        ...slam(frame, 0, 9),
       }}
     >
       <div>{a}</div>
@@ -54,7 +52,10 @@ const OneMind = () => {
 
 /** "Multiple disciplines." — every anatomy diagram at once. */
 const Multiple = () => {
-  const bg = C.violet;
+  const frame = useCurrentFrame();
+  // Strobe through the palette for the first frames, like a montage of every discipline.
+  const strobe = [C.lime, C.black, C.white, C.violet, C.lime, C.black];
+  const bg = frame < strobe.length ? strobe[frame] : C.violet;
   const fg = fgFor(bg);
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
@@ -93,13 +94,19 @@ const Endless = () => {
 export const Manifesto = () => (
   <Series>
     <Series.Sequence name="One mind" durationInFrames={MANIFESTO_FRAMES}>
-      <OneMind />
+      <Cut flash={C.white} sound="hit" seed="one">
+        <OneMind />
+      </Cut>
     </Series.Sequence>
     <Series.Sequence name="Multiple disciplines" durationInFrames={MANIFESTO_FRAMES}>
-      <Multiple />
+      <Cut flash={C.lime} sound="zap" volume={0.6} seed="multi">
+        <Multiple />
+      </Cut>
     </Series.Sequence>
     <Series.Sequence name="Endless possibilities" durationInFrames={MANIFESTO_FRAMES}>
-      <Endless />
+      <Cut flash={C.violet} sound="hit" seed="endless">
+        <Endless />
+      </Cut>
     </Series.Sequence>
   </Series>
 );

@@ -1,5 +1,5 @@
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { C, EASE, Guides, Label, prog, SANS, Typewriter } from "../theme";
+import { C, EASE, Guides, Label, prog, SANS, Sfx, Typewriter } from "../theme";
 
 /** "I'm Elmohanad Karoum" with a dimension line, and the stencil portrait rising. */
 export const Name = () => {
@@ -9,6 +9,8 @@ export const Name = () => {
   const name: React.CSSProperties = { fontFamily: SANS, fontSize: 160, letterSpacing: -5, lineHeight: 1, color: C.black };
   return (
     <AbsoluteFill style={{ backgroundColor: C.white }}>
+      <Sfx name="whoosh" at={12} volume={0.6} />
+      <Sfx name="hit" at={30} volume={0.45} />
       <Guides color={C.black} xs={[90, 990]} ys={[300, 860]} opacity={0.25} />
       <div style={{ position: "absolute", top: 330, left: 90, fontFamily: SANS, fontWeight: 700, fontSize: 84, color: C.black }}>
         I’m

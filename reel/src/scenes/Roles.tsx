@@ -1,8 +1,8 @@
 import React from "react";
-import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
-import { accentFor, C, EASE, fgFor, prog, SANS, TopBar } from "../theme";
+import { AbsoluteFill, Series, useCurrentFrame } from "remotion";
+import { accentFor, BEAT, C, Cut, fgFor, flicker, SANS, slam, TopBar } from "../theme";
 
-export const ROLE_FRAMES = 24;
+export const ROLE_FRAMES = BEAT;
 
 const ROLES: { a: string; b: string; bg: string; mark: "circle" | "square" | "triangle" }[] = [
   { a: "Creative", b: "Director", bg: C.violet, mark: "circle" },
@@ -22,11 +22,11 @@ const Role: React.FC<{ i: number }> = ({ i }) => {
   const frame = useCurrentFrame();
   const r = ROLES[i];
   const fg = fgFor(r.bg);
-  const p = prog(frame, 0, 10, EASE);
   return (
+    <Cut flash={accentFor(r.bg)} sound={i === 0 ? "hit" : "tick"} volume={i === 0 ? 0.6 : 0.8} seed={`role${i}`}>
     <AbsoluteFill style={{ backgroundColor: r.bg }}>
       <TopBar left="Role" right={`0${i + 1} / 03`} color={fg} />
-      <div style={{ position: "absolute", top: 700, left: 90, fontFamily: SANS, fontWeight: 700, fontSize: 84, color: fg }}>
+      <div style={{ position: "absolute", top: 700, left: 90, fontFamily: SANS, fontWeight: 700, fontSize: 84, color: fg, opacity: flicker(frame) }}>
         I’m your
       </div>
       <div
@@ -41,8 +41,8 @@ const Role: React.FC<{ i: number }> = ({ i }) => {
           letterSpacing: -5,
           lineHeight: 1.02,
           color: fg,
-          opacity: p,
-          translate: `0 ${interpolate(p, [0, 1], [60, 0])}px`,
+          transformOrigin: "left center",
+          ...slam(frame, 0, 8),
         }}
       >
         <div>
@@ -52,6 +52,7 @@ const Role: React.FC<{ i: number }> = ({ i }) => {
         <Mark kind={r.mark} color={accentFor(r.bg)} />
       </div>
     </AbsoluteFill>
+    </Cut>
   );
 };
 
