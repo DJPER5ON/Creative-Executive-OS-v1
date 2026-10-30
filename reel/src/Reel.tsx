@@ -15,12 +15,12 @@ export const SCENES = [
   { id: "Intro", component: Intro, frames: 54 },
   { id: "Name", component: Name, frames: 66 },
   { id: "Roles", component: Roles, frames: 3 * ROLE_FRAMES },
-  { id: "Philosophy", component: Philosophy, frames: 90 },
-  { id: "Services", component: Services, frames: 7 * SERVICE_FRAMES },
-  { id: "Process", component: Process, frames: 78 },
+  { id: "Philosophy", component: Philosophy, frames: 78 },
+  { id: "Services", component: Services, frames: 8 * SERVICE_FRAMES },
+  { id: "Process", component: Process, frames: 72 },
   { id: "Manifesto", component: Manifesto, frames: 3 * MANIFESTO_FRAMES },
-  { id: "Cta", component: Cta, frames: 75 },
-  { id: "EndCard", component: EndCard, frames: 99 },
+  { id: "Cta", component: Cta, frames: 69 },
+  { id: "EndCard", component: EndCard, frames: 93 },
 ];
 
 export const REEL_FRAMES = SCENES.reduce((n, s) => n + s.frames, 0);

@@ -3,7 +3,7 @@ import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
 import { DISCIPLINES } from "../anatomy/Anatomy";
 import { accentFor, C, draw, EASE, fgFor, IN_OUT, prog, SANS } from "../theme";
 
-export const MANIFESTO_FRAMES = 38;
+export const MANIFESTO_FRAMES = 36;
 
 const Headline: React.FC<{ a: string; b: string; color: string; accent: string; top: number }> = ({ a, b, color, accent, top }) => {
   const frame = useCurrentFrame();
@@ -52,7 +52,7 @@ const OneMind = () => {
   );
 };
 
-/** "Multiple disciplines." — all seven anatomy diagrams at once. */
+/** "Multiple disciplines." — every anatomy diagram at once. */
 const Multiple = () => {
   const bg = C.violet;
   const fg = fgFor(bg);
@@ -60,7 +60,7 @@ const Multiple = () => {
     <AbsoluteFill style={{ backgroundColor: bg }}>
       <div style={{ position: "absolute", top: 720, left: 90, right: 90, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "40px 50px" }}>
         {DISCIPLINES.map(({ name, Diagram }) => (
-          <Diagram key={name.join()} fg={fg} accent={accentFor(bg)} size={230} speed={1.6} />
+          <Diagram key={name.join()} fg={fg} accent={accentFor(bg)} size={210} speed={1.6} />
         ))}
       </div>
       <Headline a="Multiple" b="disciplines" color={fg} accent={C.lime} top={300} />

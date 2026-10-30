@@ -94,6 +94,73 @@ export const MotionGraphics: React.FC<AnatomyProps> = ({ fg, accent, size = 800,
   );
 };
 
+export const Filmmaking: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed }) => {
+  const p = useP(speed);
+  const frame = useCurrentFrame();
+  const frameIn = p(0, 12);
+  const thirds = p(6, 14);
+  const focus = p(12, 20);
+  const track = p(8, 20);
+  const head = p(12, 34);
+  const labels = p(12, 20);
+  const x0 = 80, y0 = 160, w = 640, h = 360;
+  const tc = Math.floor(frame * (speed ?? 1));
+  const timecode = `00:00:${String(Math.floor(tc / 24)).padStart(2, "0")}:${String(tc % 24).padStart(2, "0")}`;
+  const clips: [number, number][] = [[80, 200], [288, 150], [446, 274]];
+  const headX = 80 + 640 * head;
+  const corner = (x: number, y: number, dx: number, dy: number) => `M${x + dx * 50},${y} L${x},${y} L${x},${y + dy * 50}`;
+  return (
+    <Frame size={size}>
+      <rect x={x0} y={y0} width={w} height={h} fill="none" stroke={fg} strokeWidth={HAIR} opacity={0.5} {...draw(frameIn)} />
+      <g stroke={fg} strokeWidth={LINE} fill="none" opacity={frameIn}>
+        <path d={corner(x0 + 24, y0 + 24, 1, 1)} />
+        <path d={corner(x0 + w - 24, y0 + 24, -1, 1)} />
+        <path d={corner(x0 + 24, y0 + h - 24, 1, -1)} />
+        <path d={corner(x0 + w - 24, y0 + h - 24, -1, -1)} />
+      </g>
+      <g stroke={fg} strokeWidth={HAIR} opacity={0.4 * thirds} strokeDasharray="4 8">
+        {[1, 2].map((k) => (
+          <line key={`v${k}`} x1={x0 + (w * k) / 3} x2={x0 + (w * k) / 3} y1={y0} y2={y0 + h} />
+        ))}
+        {[1, 2].map((k) => (
+          <line key={`h${k}`} x1={x0} x2={x0 + w} y1={y0 + (h * k) / 3} y2={y0 + (h * k) / 3} />
+        ))}
+      </g>
+      <g stroke={fg} strokeWidth={HAIR} opacity={thirds}>
+        <line x1={400 - 18} x2={400 + 18} y1={340} y2={340} />
+        <line x1={400} x2={400} y1={340 - 18} y2={340 + 18} />
+      </g>
+      <rect
+        x={x0 + (w * 2) / 3 - 50}
+        y={y0 + h / 3 - 40}
+        width={100 * focus}
+        height={80 * focus}
+        fill="none"
+        stroke={accent}
+        strokeWidth={LINE}
+        transform={`translate(${50 * (1 - focus)} ${40 * (1 - focus)})`}
+      />
+      <circle cx={x0 + 46} cy={y0 - 36} r={10} fill={accent} opacity={labels * (Math.floor(frame / 10) % 2 === 0 ? 1 : 0.25)} />
+      <T x={x0 + 66} y={y0 - 28} fill={fg} o={labels}>REC</T>
+      <T x={x0 + w} y={y0 - 28} fill={fg} o={labels} anchor="end">{timecode}</T>
+      <T x={x0} y={y0 + h + 40} fill={fg} o={labels} size={20}>RULE OF THIRDS</T>
+      <T x={x0 + w} y={y0 + h + 40} fill={fg} o={labels} anchor="end" size={20}>16:9</T>
+      <line x1={80} x2={80 + 640 * track} y1={640} y2={640} stroke={fg} strokeWidth={HAIR} opacity={0.4} />
+      {clips.map(([x, cw], i) => (
+        <rect key={i} x={x} y={608} width={(cw - 8) * track} height={64} rx={6} fill={headX > x ? fg : "none"} fillOpacity={0.18} stroke={fg} strokeWidth={HAIR} />
+      ))}
+      {clips.slice(1).map(([x], i) => (
+        <g key={i} opacity={labels}>
+          <line x1={x - 4} x2={x - 4} y1={596} y2={684} stroke={accent} strokeWidth={LINE} />
+          <T x={x - 4} y={720} fill={fg} o={1} anchor="middle" size={20}>CUT</T>
+        </g>
+      ))}
+      <line x1={headX} x2={headX} y1={580} y2={700} stroke={fg} strokeWidth={LINE} opacity={head > 0 && head < 1 ? 1 : 0} />
+      <T x={80} y={720} fill={fg} o={labels} size={20}>SHOT 01</T>
+    </Frame>
+  );
+};
+
 export const UIUX: React.FC<AnatomyProps> = ({ fg, accent, size = 800, speed }) => {
   const p = useP(speed);
   const phone = p(0, 12);
@@ -372,6 +439,7 @@ export const SoundDesign: React.FC<AnatomyProps> = ({ fg, accent, size = 800, sp
 
 export const DISCIPLINES: { name: [string, string]; Diagram: React.FC<AnatomyProps> }[] = [
   { name: ["Motion", "Graphics"], Diagram: MotionGraphics },
+  { name: ["", "Filmmaking"], Diagram: Filmmaking },
   { name: ["UI/UX", "Design"], Diagram: UIUX },
   { name: ["", "Branding"], Diagram: Branding },
   { name: ["Creative", "Writing"], Diagram: CreativeWriting },

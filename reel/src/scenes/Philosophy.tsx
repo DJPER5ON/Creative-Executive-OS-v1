@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { C, draw, EASE, IN_OUT, Label, prog, SANS } from "../theme";
 
-const SWAP = 50;
+const SWAP = 46;
 
 /** Hairline selection box with corner handles, like a design tool. */
 const Selection: React.FC<{ p: number; w: number; h: number; color: string }> = ({ p, w, h, color }) => (

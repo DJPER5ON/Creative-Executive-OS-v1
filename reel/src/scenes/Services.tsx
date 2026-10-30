@@ -4,7 +4,7 @@ import { DISCIPLINES } from "../anatomy/Anatomy";
 import { accentFor, C, EASE, fgFor, prog, SANS, TopBar, Typewriter } from "../theme";
 
 export const SERVICE_FRAMES = 36;
-const BGS = [C.black, C.violet, C.lime, C.white, C.black, C.violet, C.lime];
+const BGS = [C.black, C.violet, C.lime, C.white, C.black, C.violet, C.lime, C.black];
 
 /** One discipline: its hairline anatomy diagram plus its name. */
 const Service: React.FC<{ i: number }> = ({ i }) => {
@@ -15,7 +15,7 @@ const Service: React.FC<{ i: number }> = ({ i }) => {
   const p = prog(frame, 2, 12, EASE);
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
-      <TopBar left="Disciplines" right={`0${i + 1} / 07`} color={fg} />
+      <TopBar left="Disciplines" right={`0${i + 1} / 0${DISCIPLINES.length}`} color={fg} />
       <div style={{ position: "absolute", top: 270, left: 90, fontFamily: SANS, fontWeight: 400, fontSize: 52, color: fg }}>
         {i === 0 ? <Typewriter text="I bring ideas to life through" start={0} cps={2} hideCaretAfter={20} /> : "I bring ideas to life through"}
       </div>
