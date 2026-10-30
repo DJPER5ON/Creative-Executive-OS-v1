@@ -37,8 +37,8 @@ export const BEAT = 16;
 
 export type SfxName = "hit" | "whoosh" | "zap" | "type" | "tick" | "clap" | "riser" | "boom" | "shutter";
 
-/** Lets a composition switch every sound effect off, e.g. for a silent export. */
-export const SfxEnabled = React.createContext(true);
+/** Overall sound-effect level for a composition: 1 = as authored, 0 = silent. */
+export const SfxGain = React.createContext(1);
 
 /** A sound effect from public/sfx, starting at frame `at` of the current sequence. */
 export const Sfx: React.FC<{ name: SfxName; at?: number; volume?: number; durationInFrames?: number }> = ({
@@ -46,12 +46,14 @@ export const Sfx: React.FC<{ name: SfxName; at?: number; volume?: number; durati
   at = 0,
   volume = 0.8,
   durationInFrames,
-}) =>
-  React.useContext(SfxEnabled) ? (
+}) => {
+  const gain = React.useContext(SfxGain);
+  return gain > 0 ? (
     <Sequence from={at} durationInFrames={durationInFrames} layout="none" name={`sfx:${name}`}>
-      <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume} />
+      <Audio src={staticFile(`sfx/${name}.wav`)} volume={volume * gain} />
     </Sequence>
   ) : null;
+};
 
 /**
  * A hard cut with the reference's flicker: a two-frame flash of `flash`, a

@@ -1,6 +1,6 @@
 import { Audio } from "@remotion/media";
 import React from "react";
-import { interpolate, Series, staticFile } from "remotion";
+import { Series, staticFile } from "remotion";
 import { Cta } from "./scenes/Cta";
 import { EndCard } from "./scenes/EndCard";
 import { Intro } from "./scenes/Intro";
@@ -10,12 +10,13 @@ import { Philosophy } from "./scenes/Philosophy";
 import { Process } from "./scenes/Process";
 import { Roles, ROLE_FRAMES } from "./scenes/Roles";
 import { Services, SERVICE_FRAMES } from "./scenes/Services";
-import { BEAT, C, Cut, SfxEnabled } from "./theme";
+import { BEAT, C, Cut, SfxGain } from "./theme";
 
 export const FPS = 30;
 
 // Every scene is a whole number of beats (16 frames = 112.5 BPM), so cuts land
-// on the beat. sfx/generate.py mirrors these start frames for the music bed.
+// on the beat. The music (Forward Pulse) is time-stretched to this grid, with
+// its kick entry on Services, its breakdown on Process and its drop on Manifesto.
 export const SCENES: { id: string; component: React.FC; frames: number; cut?: { flash: string } }[] = [
   { id: "Intro", component: Intro, frames: 4 * BEAT },
   { id: "Name", component: Name, frames: 4 * BEAT, cut: { flash: C.lime } },
@@ -30,15 +31,12 @@ export const SCENES: { id: string; component: React.FC; frames: number; cut?: { 
 
 export const REEL_FRAMES = SCENES.reduce((n, s) => n + s.frames, 0);
 
-export type ReelProps = { music: boolean; sfx?: boolean };
+export type ReelProps = { music: boolean; sfx?: number };
 
-export const Reel: React.FC<ReelProps> = ({ music, sfx = true }) => (
-  <SfxEnabled.Provider value={sfx}>
+export const Reel: React.FC<ReelProps> = ({ music, sfx = 0 }) => (
+  <SfxGain.Provider value={sfx}>
     {music ? (
-      <Audio
-        src={staticFile("music/bed.wav")}
-        volume={(f) => interpolate(f, [REEL_FRAMES - 20, REEL_FRAMES], [0.6, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
-      />
+      <Audio src={staticFile("music/forward-pulse.wav")} volume={0.95} />
     ) : null}
     <Series>
       {SCENES.map(({ id, component: Scene, frames, cut }) => (
@@ -53,5 +51,5 @@ export const Reel: React.FC<ReelProps> = ({ music, sfx = true }) => (
         </Series.Sequence>
       ))}
     </Series>
-  </SfxEnabled.Provider>
+  </SfxGain.Provider>
 );
