@@ -1,23 +1,22 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
 import { AnatomyProps } from "../anatomy/Anatomy";
-import { CinemaCamera } from "../anatomy/Machines";
-import { TurntableFigure } from "../anatomy/AnatomyTurntable";
-import { FlightCase, MediaPlayer, Mixer, Vinyl } from "../brand/Gear";
+import { FIGURES, IsoFigure } from "../anatomy/AnatomyTurntable";
+import { FlightCase, Mixer } from "../brand/Gear";
 import { accentFor, BEAT, C, Cut, fgFor, SANS, slam, TopBar } from "../theme";
 
 /** Half-beat cuts, like the reference's fast montage. */
 export const MONTAGE_CUT = BEAT / 2;
 
-// The camera stays a hairline anatomy drawing, the turntable is the isometric
-// Anatomy-kit figure, and the rest are the logo on the gear.
-const SHOTS: { word: string; bg: string; Diagram?: React.FC<AnatomyProps>; Gear?: React.FC; iso?: boolean }[] = [
-  { word: "Shoot", bg: C.black, Diagram: CinemaCamera },
-  { word: "Spin", bg: C.violet, iso: true },
-  { word: "Play", bg: C.black, Gear: MediaPlayer },
+// Camera, turntable, player and laptop are the isometric Anatomy-kit figures
+// (the same ones as the FIG. posts); mixer and flight case are the logo on the gear.
+const SHOTS: { word: string; bg: string; Diagram?: React.FC<AnatomyProps>; Gear?: React.FC; iso?: keyof typeof FIGURES }[] = [
+  { word: "Shoot", bg: C.lime, iso: "camera" },
+  { word: "Spin", bg: C.black, iso: "turntable" },
+  { word: "Play", bg: C.violet, iso: "cdj" },
   { word: "Mix", bg: C.lime, Gear: Mixer },
-  { word: "Press", bg: C.violet, Gear: Vinyl },
-  { word: "Tour", bg: C.lime, Gear: FlightCase },
+  { word: "Edit", bg: C.violet, iso: "laptop" },
+  { word: "Tour", bg: C.black, Gear: FlightCase },
 ];
 export const MONTAGE_FRAMES = SHOTS.length * MONTAGE_CUT;
 
@@ -36,8 +35,8 @@ const Shot: React.FC<{ i: number }> = ({ i }) => {
           </div>
         ) : null}
         {iso ? (
-          <div style={{ position: "absolute", top: 300, left: 130 }}>
-            <TurntableFigure built={1} apart={0.35 * Math.sin((Math.min(frame, MONTAGE_CUT) / MONTAGE_CUT) * Math.PI)} size={820} />
+          <div style={{ position: "absolute", top: 300, left: 130, scale: interpolate(frame, [0, MONTAGE_CUT], [1.06, 1]) }}>
+            <IsoFigure spec={FIGURES[iso]} built={1} apart={0.35 * Math.sin((Math.min(frame, MONTAGE_CUT) / MONTAGE_CUT) * Math.PI)} size={820} />
           </div>
         ) : null}
         {Gear ? (
