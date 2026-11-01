@@ -2,16 +2,18 @@ import React from "react";
 import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
 import { AnatomyProps } from "../anatomy/Anatomy";
 import { CinemaCamera } from "../anatomy/Machines";
-import { FlightCase, MediaPlayer, Mixer, Turntable, Vinyl } from "../brand/Gear";
+import { TurntableFigure } from "../anatomy/AnatomyTurntable";
+import { FlightCase, MediaPlayer, Mixer, Vinyl } from "../brand/Gear";
 import { accentFor, BEAT, C, Cut, fgFor, SANS, slam, TopBar } from "../theme";
 
 /** Half-beat cuts, like the reference's fast montage. */
 export const MONTAGE_CUT = BEAT / 2;
 
-// The camera stays a hairline anatomy drawing; the rest are the logo on the gear.
-const SHOTS: { word: string; bg: string; Diagram?: React.FC<AnatomyProps>; Gear?: React.FC }[] = [
+// The camera stays a hairline anatomy drawing, the turntable is the isometric
+// Anatomy-kit figure, and the rest are the logo on the gear.
+const SHOTS: { word: string; bg: string; Diagram?: React.FC<AnatomyProps>; Gear?: React.FC; iso?: boolean }[] = [
   { word: "Shoot", bg: C.black, Diagram: CinemaCamera },
-  { word: "Spin", bg: C.violet, Gear: Turntable },
+  { word: "Spin", bg: C.violet, iso: true },
   { word: "Play", bg: C.black, Gear: MediaPlayer },
   { word: "Mix", bg: C.lime, Gear: Mixer },
   { word: "Press", bg: C.violet, Gear: Vinyl },
@@ -21,7 +23,7 @@ export const MONTAGE_FRAMES = SHOTS.length * MONTAGE_CUT;
 
 const Shot: React.FC<{ i: number }> = ({ i }) => {
   const frame = useCurrentFrame();
-  const { word, bg, Diagram, Gear } = SHOTS[i];
+  const { word, bg, Diagram, Gear, iso } = SHOTS[i];
   const fg = fgFor(bg);
   const accent = accentFor(bg);
   return (
@@ -31,6 +33,11 @@ const Shot: React.FC<{ i: number }> = ({ i }) => {
         {Diagram ? (
           <div style={{ position: "absolute", top: 330, left: 160, scale: interpolate(frame, [0, MONTAGE_CUT], [1.08, 1]) }}>
             <Diagram fg={fg} accent={accent} size={760} speed={2.6} />
+          </div>
+        ) : null}
+        {iso ? (
+          <div style={{ position: "absolute", top: 300, left: 130 }}>
+            <TurntableFigure built={1} apart={0.35 * Math.sin((Math.min(frame, MONTAGE_CUT) / MONTAGE_CUT) * Math.PI)} size={820} />
           </div>
         ) : null}
         {Gear ? (

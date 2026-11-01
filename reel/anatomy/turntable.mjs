@@ -4,13 +4,19 @@
 // part and pull it apart. Generic design, no brand marks.
 //
 //   node anatomy/turntable.mjs
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as k from "./kit/iso-kit.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, "../src/anatomy/figures/turntable.json");
+// The P mark, read from the reel's traced logo module.
+const LOGO = readFileSync(join(HERE, "../src/logo-path.ts"), "utf8").match(/LOGO_PATH =\s*"([^"]+)"/)[1];
+
+/** The P mark laid flat on a horizontal face, `size` world units wide, centred on `at`. */
+const markOnTop = (at, z, size, fill) =>
+  `<g transform="${k.topMatrix(at, z, P, "x")}"><g transform="scale(${size / 875}) translate(-437.5 -433.5)"><path d="${LOGO}" fill="${fill}" fill-rule="evenodd"/></g></g>`;
 
 const WIDTH = 760;
 const HEIGHT = 760;
@@ -58,12 +64,12 @@ add("base", "plinth", S(k.slabOf(PLINTH, -PLINTH_H, PLINTH_H, P, 10, 1.6), { ton
 add("base", "plinth seam", L(k.sideSeam(PLINTH, -PLINTH_H / 2, P, 10), { tone: "lo" }));
 add("base", "top groove", L(k.planOutline(k.insetPlan(PLINTH, 8), TOP, P, 10), { tone: "lo" }));
 const screws = k.corners(PLINTH, 16);
+add("base", "badge", markOnTop([PLINTH.x + 70, PLINTH.y + 50], TOP, 50, "var(--anatomy-hi)"));
 add("base", "corner screws", L(screws.map(([x, y]) => k.ring(x, y, 3.2, TOP, P, 16)).join(""), { tone: "lo" }) + D(screws.map(([x, y]) => at([x, y, TOP])), { size: 0.6 }));
 
 // ---------------------------------------------------------------- controls (back of the deck, drawn before the platter)
 const target = [-195, -140];
 add("controls", "target light", S(k.cylinder(target[0], target[1], 9, TOP, 5, P, 24), { tone: "mid" }) + S(k.cylinder(target[0], target[1], 4, TOP + 5, 26, P, 20), { tone: "mid", crease: "none" }) + S(k.cylinder(target[0], target[1], 6, TOP + 31, 6, P, 24), { tone: "hi", lit: true }));
-const power = [-195, 150];
 
 // ---------------------------------------------------------------- platter
 const [px, py] = PLATTER;
@@ -80,18 +86,18 @@ const grooves = [];
 for (let r = LABEL_R + 8; r < RECORD_R - 12; r += 7) grooves.push(k.ring(px, py, r, RECORD_Z + RECORD_H, P, 96));
 add("record", "grooves", L(grooves.join(""), { tone: "faint" }));
 add("record", "run-out", L(k.ring(px, py, LABEL_R + 4, RECORD_Z + RECORD_H, P, 64), { tone: "lo" }));
-add("record", "label", S(k.cylinder(px, py, LABEL_R, RECORD_Z + RECORD_H, 0.4, P, 64), { tone: "hi", lit: true }));
-add("record", "label text", k.faceTextSvg(k.topMatrix([px, py + 22], RECORD_Z + RECORD_H + 0.4, P, "x"), "SIDE A · 33⅓", { size: 7, tone: "lo", anchor: "middle" }));
+add("record", "label", S(k.cylinder(px, py, LABEL_R, RECORD_Z + RECORD_H, 0.4, P, 64), { tone: "hi", lit: true, className: "pl-lime" }));
+add("record", "label mark", markOnTop([px - 2, py - 8], RECORD_Z + RECORD_H + 0.4, 52, "#000"));
+add("record", "label text", k.faceTextSvg(k.topMatrix([px, py + 32], RECORD_Z + RECORD_H + 0.4, P, "x"), "PER5ON · 33⅓", { size: 6, tone: "hi", anchor: "middle" }));
 add("record", "spindle", S(k.cylinder(px, py, 3.6, RECORD_Z + RECORD_H, 14, P, 20), { tone: "mid" }));
 
 // ---------------------------------------------------------------- controls in front of the platter
 const start = { x: -205, y: 95, w: 70, d: 52, r: 6 };
-add("controls", "start / stop", S(k.slabOf(start, TOP, 7, P, 4, 0.8), { tone: "hi", lit: true }) + L(k.planOutline(k.insetPlan(start, 6), TOP + 7, P, 4), { tone: "faint" }));
+add("controls", "start / stop", S(k.slabOf(start, TOP, 7, P, 4, 0.8), { tone: "hi", lit: true, className: "pl-lime" }) + L(k.planOutline(k.insetPlan(start, 6), TOP + 7, P, 4), { tone: "faint" }));
 for (const [i, label] of ["33", "45"].entries()) {
   const b = { x: -120 + i * 46, y: 128, w: 36, d: 22, r: 4 };
   add("controls", `${label} rpm`, S(k.slabOf(b, TOP, 5, P, 3, 0.5), { tone: "mid" }) + k.faceTextSvg(k.topMatrix([b.x + b.w / 2, b.y + b.d / 2 + 3], TOP + 5, P, "x"), label, { size: 9, tone: "lo", anchor: "middle" }));
 }
-add("controls", "power dial", S(k.cylinder(power[0] + 10, power[1] - 98, 0.1, TOP, 0.1, P, 4), { tone: "faint" }));
 const slot = { x: 168, y: -30, w: 14, d: 170, r: 6 };
 add("controls", "pitch slot", S(k.slabOf(slot, TOP - 2, 2, P, 4), { tone: "lo", crease: "none" }) + L(k.planOutline(slot, TOP, P, 4), { tone: "lo" }));
 const pt = k.topTicks(slot.y + 6, slot.y + slot.d - 6, 8, 5, slot.x + slot.w + 4, TOP, [5, 10], P, "y");
@@ -116,7 +122,7 @@ add("tonearm", "counterweight", S(k.cylinder(cw[0], cw[1], 16, ARM_Z - 8, 16, P,
 const head = [px + 60, py + 70];
 add("tonearm", "arm", L(k.segment([ax, ay, ARM_Z + 4], [head[0] - u[0] * 18, head[1] - u[1] * 18, ARM_Z - 4], P), { tone: "hi" }) + L(k.segment([ax, ay, ARM_Z + 6], [head[0] - u[0] * 18, head[1] - u[1] * 18, ARM_Z - 2], P), { tone: "hi" }));
 const shell = { x: head[0] - 12, y: head[1] - 10, w: 30, d: 20, r: 3 };
-add("tonearm", "headshell", S(k.slabOf(shell, ARM_Z - 12, 8, P, 3, 0.6), { tone: "hi", lit: true }));
+add("tonearm", "headshell", S(k.slabOf(shell, ARM_Z - 12, 8, P, 3, 0.6), { tone: "hi", lit: true, className: "pl-lime" }));
 add("tonearm", "stylus", L(k.segment([head[0], head[1], ARM_Z - 12], [head[0], head[1], RECORD_Z + RECORD_H], P), { tone: "lit" }) + D([at([head[0], head[1], RECORD_Z + RECORD_H])], { size: 0.8, tone: "hi" }));
 
 const json = {
@@ -125,11 +131,23 @@ const json = {
   // Screen px per world unit of height: a part lifted by z moves up z * rise.
   rise: k.screenRise(1, P),
   groups: ["base", "controls", "platter", "slipmat", "record", "tonearm"],
+  // Screen points for callout labels in the exploded view, one per group.
+  anchors: {
+    base: at([PLINTH.x + PLINTH.w, PLINTH.y + PLINTH.d * 0.7, -PLINTH_H / 2]),
+    controls: at([slot.x + slot.w, slot.y + slot.d, TOP]),
+    platter: at([px + PLATTER_R * 0.7, py + PLATTER_R * 0.7, TOP + 14]),
+    slipmat: at([px - PLATTER_R * 0.7, py + PLATTER_R * 0.7, PLATTER_TOP + 1]),
+    record: at([px + RECORD_R * 0.7, py - RECORD_R * 0.7, RECORD_Z]),
+    tonearm: at([ax, ay, ARM_Z + 10]),
+  },
   parts,
 };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(json));
 writeFileSync(join(dirname(OUT), "iso-css.ts"), `// Generated by anatomy/turntable.mjs from the Anatomy kit's ISO_CSS (MIT).\nexport const ISO_CSS = ${JSON.stringify(k.ISO_CSS)};\n`);
-// A standalone preview page for checking the drawing in a browser.
-writeFileSync(join(HERE, "turntable-preview.html"), `<!doctype html><meta charset="utf-8"><body class="iso" style="margin:0;background:#000">${k.figureSvg({ width: WIDTH, height: HEIGHT, label: "Turntable", body: parts.map((p) => p.svg), standalone: true })}</body>`);
+// Lime accent for the parts marked pl-lime (label, start button, headshell).
+const LIME_CSS = ".iso-solid.pl-lime>.iso-fill,.iso-solid.pl-lime[data-lit]>.iso-top{fill:#C6FF33}.iso-solid.pl-lime[data-lit]>.iso-shade{fill:#A8DB22}";
+writeFileSync(join(dirname(OUT), "lime-css.ts"), `export const LIME_CSS = ${JSON.stringify(LIME_CSS)};\n`);
+// A standalone preview page for checking the drawing in a browser (light paper theme).
+writeFileSync(join(HERE, "turntable-preview.html"), `<!doctype html><meta charset="utf-8"><style>${k.ISO_CSS}${LIME_CSS}</style><body class="iso" data-theme="light" style="margin:0;background:#f2f2ef">${k.figureSvg({ width: WIDTH, height: HEIGHT, label: "Turntable", body: parts.map((p) => p.svg) })}</body>`);
 console.log(`turntable: ${parts.length} parts`);
