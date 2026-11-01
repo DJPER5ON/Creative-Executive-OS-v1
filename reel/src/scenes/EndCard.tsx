@@ -3,10 +3,11 @@ import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { Logo } from "../Logo";
 import { BEAT, C, Cut, flicker, Guides, IN_OUT, Label, prog, SANS, slam } from "../theme";
 
-export const NAME_CARD_FRAMES = 4 * BEAT;
+// 3.5 beats: the montage before it runs seven half-beat shots, so the morph still lands on a beat.
+export const NAME_CARD_FRAMES = 3.5 * BEAT;
 /** The alias lands on beat 3 of the card; the melt starts 20 frames before. */
 const MORPH_FRAMES = 20;
-export const MORPH_LAND = 3 * BEAT;
+export const MORPH_LAND = NAME_CARD_FRAMES - BEAT;
 const MORPH = MORPH_LAND - MORPH_FRAMES;
 
 /**

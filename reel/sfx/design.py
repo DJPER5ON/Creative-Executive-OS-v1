@@ -252,7 +252,7 @@ def pop():
 
 # Scene cut frames (src/Reel.tsx, 16-frame beats).
 INTRO, NAME, ROLES, PHILO, WHEEL, SERVICES, PROCESS, MANIFESTO, CTA, MONTAGE, NAMECARD, FINAL = (
-    0, 64, 128, 176, 224, 288, 544, 576, 672, 720, 768, 832,
+    0, 64, 128, 176, 224, 288, 544, 576, 672, 720, 776, 832,
 )
 SERVICE = 32
 WHEEL_FRAMES, WHEEL_TRAVEL = 64, 24
@@ -323,21 +323,22 @@ place(impact_from_music(F(CTA + 16), 0.6), CTA + 16, 0.45)
 place(riser(F(MONTAGE) - F(CTA + 16)), MONTAGE, 0.3, end_at=True)
 
 # Montage: a cut every half beat, each with its own sound.
-cuts = [MONTAGE + 8 * k for k in range(6)]
+cuts = [MONTAGE + 8 * k for k in range(7)]
 for k, fr in enumerate(cuts):
     place(stutter(F(fr), 2), fr, 0.3)
     place(glitch(0.07), fr, 0.35)
 place(shutter(), cuts[0], 0.7)                         # Shoot: camera shutter
-place(vinyl_scratch(F(cuts[1])), cuts[1], 0.45)        # Spin: scratch the track
-place(ui_tick(1.4), cuts[2], 0.55)                     # Mix
-place(ui_tick(1.7), cuts[3], 0.5)                      # Compose
-place(pop(), cuts[4], 0.55)                            # Record
-place(impact_from_music(F(cuts[5]), 0.5), cuts[5], 0.4)  # Design
+place(ui_tick(1.4), cuts[1], 0.55)                     # Play: cue button
+place(glitch(0.1), cuts[2], 0.45)                      # Edit: a cut
+place(whoosh(0.25, -0.6, 0.6), cuts[3], 0.4)           # Animate: motion
+place(pop(), cuts[4], 0.55)                            # Brand: the mark lands
+place(ui_tick(1.7), cuts[5], 0.5)                      # Strategy
+place(impact_from_music(F(cuts[6]), 0.5), cuts[6], 0.4)  # UX/UI
 
 # Name card: impact on the cut, liquid morph into PER5ON, hit as it lands.
 place(impact_from_music(F(NAMECARD), 1.0), NAMECARD, 0.65)
-place(liquid_morph(F(20)), NAMECARD + 28, 0.45)
-place(impact_from_music(F(NAMECARD + 48), 0.8), NAMECARD + 48, 0.55)
+place(liquid_morph(F(20)), NAMECARD + 20, 0.45)
+place(impact_from_music(F(NAMECARD + 40), 0.8), NAMECARD + 40, 0.55)
 
 # Final call to action: swell in, impact, tick per line, pop on "DMs open".
 place(reverse_swell(F(FINAL), 0.4), FINAL, 0.4, end_at=True)

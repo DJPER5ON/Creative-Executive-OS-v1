@@ -1,22 +1,22 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Series, useCurrentFrame } from "remotion";
-import { AnatomyProps } from "../anatomy/Anatomy";
+import { AnatomyProps, Branding, MotionGraphics, Strategy, UIUX } from "../anatomy/Anatomy";
 import { FIGURES, IsoFigure } from "../anatomy/AnatomyTurntable";
-import { FlightCase, Mixer } from "../brand/Gear";
 import { accentFor, BEAT, C, Cut, fgFor, SANS, slam, TopBar } from "../theme";
 
 /** Half-beat cuts, like the reference's fast montage. */
 export const MONTAGE_CUT = BEAT / 2;
 
-// Camera, turntable, player and laptop are the isometric Anatomy-kit figures
-// (the same ones as the FIG. posts); mixer and flight case are the logo on the gear.
+// Camera, player and laptop are the isometric Anatomy-kit figures (the same
+// ones as the FIG. posts); the disciplines are hairline anatomy diagrams.
 const SHOTS: { word: string; bg: string; Diagram?: React.FC<AnatomyProps>; Gear?: React.FC; iso?: keyof typeof FIGURES }[] = [
   { word: "Shoot", bg: C.lime, iso: "camera" },
-  { word: "Spin", bg: C.black, iso: "turntable" },
   { word: "Play", bg: C.violet, iso: "cdj" },
-  { word: "Mix", bg: C.lime, Gear: Mixer },
-  { word: "Edit", bg: C.violet, iso: "laptop" },
-  { word: "Tour", bg: C.black, Gear: FlightCase },
+  { word: "Edit", bg: C.black, iso: "laptop" },
+  { word: "Animate", bg: C.lime, Diagram: MotionGraphics },
+  { word: "Brand", bg: C.violet, Diagram: Branding },
+  { word: "Strategy", bg: C.black, Diagram: Strategy },
+  { word: "UX/UI", bg: C.lime, Diagram: UIUX },
 ];
 export const MONTAGE_FRAMES = SHOTS.length * MONTAGE_CUT;
 
@@ -28,7 +28,7 @@ const Shot: React.FC<{ i: number }> = ({ i }) => {
   return (
     <Cut flash={i % 2 ? C.white : C.lime} sound={null} shake={14} seed={`shot${i}`}>
       <AbsoluteFill style={{ backgroundColor: bg }}>
-        <TopBar left="Tools" right={`0${i + 1} / 0${SHOTS.length}`} color={fg} />
+        <TopBar left="Craft" right={`0${i + 1} / 0${SHOTS.length}`} color={fg} />
         {Diagram ? (
           <div style={{ position: "absolute", top: 330, left: 160, scale: interpolate(frame, [0, MONTAGE_CUT], [1.08, 1]) }}>
             <Diagram fg={fg} accent={accent} size={760} speed={2.6} />
