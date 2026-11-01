@@ -4,7 +4,7 @@ import { FPS, Reel, REEL_FRAMES, SCENES } from "./Reel";
 import { LOGO_REVEAL_FRAMES, LogoReveal } from "./scenes/LogoReveal";
 import { BRAND_WORLD_FRAMES, BrandWorld, GearPost, GearStill } from "./brand/BrandWorld";
 import { GEAR } from "./brand/Gear";
-import { ANATOMY_FRAMES, AnatomyTurntable } from "./anatomy/AnatomyTurntable";
+import { ANATOMY_FRAMES, AnatomyPost, AnatomyTurntable } from "./anatomy/AnatomyTurntable";
 
 const SIZE = { width: 1080, height: 1920, fps: FPS };
 
@@ -18,7 +18,12 @@ export const RemotionRoot: React.FC = () => {
       </Folder>
       <Composition id="Reel" component={Reel} durationInFrames={REEL_FRAMES} defaultProps={{ music: true, sfx: 0, stem: 0.7 }} {...SIZE} />
       <Composition id="BrandWorld" component={BrandWorld} durationInFrames={BRAND_WORLD_FRAMES} defaultProps={{ music: true }} {...SIZE} />
-      <Composition id="AnatomyTurntable" component={AnatomyTurntable} durationInFrames={ANATOMY_FRAMES} defaultProps={{ music: true }} {...SIZE} />
+      <Folder name="Anatomy">
+        <Composition id="AnatomyTurntable" component={AnatomyTurntable} durationInFrames={ANATOMY_FRAMES} defaultProps={{ music: true }} {...SIZE} />
+        {(["cdj", "camera", "laptop"] as const).map((fig) => (
+          <Composition key={fig} id={`Anatomy-${fig}`} component={AnatomyPost} durationInFrames={ANATOMY_FRAMES} defaultProps={{ music: true, figure: fig }} {...SIZE} />
+        ))}
+      </Folder>
       <Folder name="Gear-Stills">
         {GEAR.map((g, i) => (
           <React.Fragment key={g.id}>

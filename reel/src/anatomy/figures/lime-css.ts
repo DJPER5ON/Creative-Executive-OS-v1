@@ -1,1 +1,1 @@
-export const LIME_CSS = ".iso-solid.pl-lime>.iso-fill,.iso-solid.pl-lime[data-lit]>.iso-top{fill:#C6FF33}.iso-solid.pl-lime[data-lit]>.iso-shade{fill:#A8DB22}";
+export const LIME_CSS = ".iso-solid.pl-lime>.iso-fill,.iso-solid.pl-lime[data-lit]>.iso-top{fill:#C6FF33}.iso-solid.pl-lime[data-lit]>.iso-shade{fill:#A8DB22}.iso-solid.pl-ink>.iso-fill,.iso-solid.pl-ink>.iso-top{fill:#202024}.iso-solid.pl-ink>.iso-shade{fill:#16161a}.pl-glow .iso-line{stroke:#C6FF33;stroke-width:1.4}.pl-glow .iso-face-text{fill:#e8e8e8}";
